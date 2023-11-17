@@ -288,12 +288,15 @@ class Controller:
         Function that computes the desired thrust and quaternion for quadrotor based on desired trajectory.
         """
 
-        #Compute position and velocity error
+        # Compute position and velocity error
         error_pos = pos_atual - pos_des
         error_vel = vel_atual - vel_des
 
+        # aceleração desejada normalizada |accel_des| = 1
         n = accel_des/np.linalg.norm(accel_des)
+        # velocidade desejada normalizada |vel_des| = 1
         t = vel_des/np.linalg.norm(vel_des)
+        # produto vetorial dos vetores t e n
         b = np.cross(t, n, axis=0)
 
         if np.isnan(b).any:

@@ -302,12 +302,12 @@ def controller_node():
             accel_ref = np.array([[traj['ddx'][step], traj['ddy'][step], traj['ddz'][step]]]).T
             qz = traj['qz ref'][step]
            
-            #Estimated states from Error State Kalman Filter
+            # Estimated states from Error State Kalman Filter
             q_est = np.array([[qw_est, qx_est, qy_est, qz_est]]).T
 
             pos_est = np.array([[x_est, y_est, z_est]]).T
             
-            #Angular rate from gyroscope
+            # Angular rate from gyroscope
             omega_gyro = np.array([[gx, gy, gz]]).T
 
             #Position Control based in quaternion parametrization
