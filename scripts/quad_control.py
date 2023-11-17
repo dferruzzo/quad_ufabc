@@ -40,8 +40,10 @@ class Controller:
         outputs:
             F - Proppeler Thrust - engine 1 to 4
             w - Proppeler angular velocity - engine 1 to 4
-            F_new - clipped thrust (if control surpasses engine maximum)
-            M_new - clipped momentum (same as above)
+            F_new - clipped thrust (if control surpasses maximum motor thrust)
+            M_new - clipped momentum (same as above)     
+            
+            Numa futura versão essa função pode ser um control allocator.       
         """""
         x = np.array([[self.KT, self.KT, self.KT, self.KT],
                       [-self.L*self.KT, 0, self.L*self.KT, 0],
@@ -56,20 +58,27 @@ class Controller:
          u = x^(-1)*y         
          
         """
-        u = np.linalg.solve(x, y) # x*u = y
+        
+        """
+        u  é o vetor do quadrado das velocidades angulares dos motores
+        """
+        u = np.linalg.solve(x, y) # x*u = y 
         
         w_1 = np.sqrt(np.abs(u[0]))*(-1)    # sentido do giro
         w_2 = np.sqrt(np.abs(u[1]))
         w_3 = np.sqrt(np.abs(u[2]))*(-1)    # sentido do giro    
         w_4 = np.sqrt(np.abs(u[3]))
             
+        """
+        w é o vetor das velocidades angulares dos motores
+        """
+        
         w = np.array([[w_1,w_2,w_3,w_4]]).T
                 
         """
-        Não está sendo utilizado clipping. Isnto é, não está sendo verificado o máximo esforço requerido.
+        Não está sendo utilizado clipping. Isto é, não está sendo verificado o máximo esforço requerido.
         """
-        FM_new = np.dot(x, u)   # Nao está sendo utilizado
-        
+        FM_new = np.dot(x, u)   # Nao está sendo utilizado        
         F_new = FM_new[0]       # Nao está sendo utilizado
         M_new = FM_new[1:4]     # Nao está sendo utilizado
         

@@ -14,12 +14,13 @@ class EKF:
         pub_vel_name = '/quad/kf/vel'
         sub_sta_name = '/gazebo/model_states'
         
+        self.quad_pose = Pose()
+        self.quad_twist = Twist()  
+        
         self.pub_att = rospy.Publisher(pub_att_name, Quaternion, queue_size=10)
         self.pub_pos = rospy.Publisher(pub_pos_name, Vector3, queue_size=10)        
         self.pub_vel = rospy.Publisher(pub_vel_name, Vector3, queue_size=10)    
-        self.sub_sta = rospy.Subscriber(sub_sta_name, ModelStates, self.states_callback)
-        self.quad_pose = Pose()
-        self.quad_twist = Twist()        
+        self.sub_sta = rospy.Subscriber(sub_sta_name, ModelStates, self.states_callback)             
         
     def states_callback(self, data):
         # Quad pose, representa a posição e a attitude em quaternion

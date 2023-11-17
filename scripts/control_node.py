@@ -207,8 +207,6 @@ def callback_velocity(data):
     vx = data.x
     vy = data.y
     vz = data.z
-
-
 #############################################################################################################
 
 def controller_node():
@@ -256,7 +254,7 @@ def controller_node():
 
     ################################################################################################
     
-    #Declare some list for plotting
+    #Declare lists for plotting
     x_list, x_real_list, y_list, y_real_list, z_list, z_real_list = [], [], [], [], [], []
     x_est_list, y_est_list, z_est_list = [], [], []
     x_cam_list, y_cam_list, z_cam_list = [], [], []
@@ -291,15 +289,14 @@ def controller_node():
         flag_calib = Bool()
         #position_real = Pose()
         
-        #While step is smaller than the trajectory size
+        # While step is smaller than the trajectory size
         if step < len(traj['x']):
-
-            #Translation real states
+            # Translation real states
             att_real = np.asarray(quad_ufabc.attitude_euler).reshape(3,1)
             pos_real = np.asarray(quad_ufabc.position).reshape(3,1)
             vel_real = np.asarray(quad_ufabc.velocity).reshape(3,1)
             
-            #Set desired states from generated trajectory for each step
+            # Set desired states from generated trajectory for each step
             pos_ref = np.array([[traj['x'][step], traj['y'][step], traj['z'][step]]]).T
             vel_ref = np.array([[traj['dx'][step], traj['dy'][step], traj['dz'][step]]]).T
             accel_ref = np.array([[traj['ddx'][step], traj['ddy'][step], traj['ddz'][step]]]).T
