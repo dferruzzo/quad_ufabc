@@ -1,21 +1,36 @@
+#!/usr/bin/env python3
+#
 import pickle
 import os, sys
+from sqlite3 import Time
+from xmlrpc.client import Boolean
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.spatial.transform import Rotation as R
-
-
 from quat_utils import Euler2Quat
 from quad_control import Controller
 
+class waypoint:
+    # waypoint
+    def __init__(self, x: float, y: float, z: float, psi: float, t: float) -> None:
+        self.x: float = x
+        self.y: float = y
+        self.z: float = z
+        self.psi: float = psi
+        self.t: float = t       # time
+    
+    def __repr__(self) -> str:
+        return "{}(x={}, y={}, z={}, psi={}, time={})".format(self.__class__.__name__, self.x, self.y, self.z, self.psi, self.t)
 
-#Set main directory
-mydir = os.path.abspath(sys.path[0])
 
 #Instance Controller Class
 controller = Controller()
 
-#Define the trajectory points and the desired yaw angle
+save_to_file:bool = True
+file_name:str = 'trajectory_3.p'
+
+# Define the trajectory points and the desired yaw angle
+# waypoint(x, y, z, psi, tempo)
 
 #Trajectory 1
 # x_wp = np.array([[0.6, 0.25, -0.5, 0, 0]]).T
@@ -29,25 +44,33 @@ controller = Controller()
 # z_wp = np.array([[0, 1, 1.5, 1, 2]]).T
 # psi_wp = np.array([[0, 0, np.pi/8, np.pi/6, np.pi/4]]).T
 
-#Trajectory 3
-x_wp = np.array([[0.6, 1, 1.5, 2, 2]]).T
-y_wp = np.array([[0, 0, 0, 0.5, 1 ]]).T
-z_wp = np.array([[0, 1, 2, 2, 2]]).T
-psi_wp = np.array([[0, np.pi/6, np.pi/6, np.pi/8, 0]]).T
+# Trajectory 3
+home = waypoint(0.6, 0.0, 0.0, 0.0, 0.0)
+wp1  = waypoint(1.0, 0.0, 1.0, np.pi/6, 5.0)
+wp2  = waypoint(1.5, 0.0, 2.0, np.pi/6, 10.0)
+wp3  = waypoint(2.0, 0.5, 2.0, np.pi/8, 15.0)
+wp4  = waypoint(2.0, 1.0, 2.0, 0, 20.0)
 
+# Voo pairado
+#home = waypoint(0.6, 0.0, 0.0, 0.0, 0.0)
+#wp1  = waypoint(0.6, 0.0, 0.5, 0.0, 5.0)
+#wp2  = waypoint(0.6, 0.0, 1.0, 0.0, 10.0)
+#wp3  = waypoint(0.6, 0.0, 1.5, 0.0, 15.0)
+#wp4  = waypoint(0.6, 0.0, 2.0, 0.0, 20.0)
 
-#Trajectory Long Term
-# x_wp = np.array([[0.6, 1.5, 0, -1, -1.5]]).T
-# y_wp = np.array([[0, 0, 0, -1, 0 ]]).T
-# z_wp = np.array([[0, 0.5, 1, 1.5, 2]]).T
-# psi_wp = np.array([[0, 0, 0, 0, 0]]).T
-
-
-#Define desired time
-time = [0, 5, 10, 15, 20]
-# time = [0, 2.5, 5, 10]
 #Set sample time
 step_controller = 0.01
+
+# ----------------------------------------------
+x_wp = np.array([[home.x, wp1.x, wp2.x, wp3.x, wp4.x]]).T
+y_wp = np.array([[home.y, wp1.y, wp2.y, wp3.y, wp4.y]]).T
+z_wp = np.array([[home.z, wp1.z, wp2.z, wp3.z, wp4.z]]).T
+psi_wp = np.array([[home.psi, wp1.psi, wp2.psi, wp3.psi, wp4.psi]]).T
+
+#Define desired time
+time = [home.t, wp1.t, wp2.t, wp3.t, wp4.t]
+t0 = home.t
+tf = wp4.t
 
 #Compute minimum snap trajectory for position and minimum acceleration for yaw angle
 _, _, x_matrix = controller.getCoeff_snap(x_wp, time)
@@ -72,7 +95,7 @@ for i in range(len(psi_ref)):
     q_z_ham = q_z_ham/q_z_ham_norm
     qz_ref.append(q_z_ham)
 
-time = np.arange(0, 20, 0.01)
+time = np.arange(t0, tf, step_controller)
 
 # print([qz_ref[k][0,0] for k in range(len(qz_ref))])
 
@@ -108,12 +131,21 @@ ax.set_ylabel('Y(m)')
 ax.set_zlabel('Z(m)')
 plt.show()
 
-
-#Save trajectory in a dictionary
-# trajectory = {'x': x_ref, 'y': y_ref, 'z': z_ref, 'dx': dotx_ref, 'dy': doty_ref, 'dz': dotz_ref, 'ddx': ddotx_ref,
-#                 'ddy': ddoty_ref, 'ddz': ddotz_ref, 'psi': psi_ref, 'qz ref': qz_ref}
-
-# outfile = open(mydir + '/' + 'data/trajectory_3.p', 'wb')
-
-# pickle.dump(trajectory, outfile)
-# outfile.close()
+# Save trajectory in a dictionary
+if save_to_file:
+    trajectory = {'x': x_ref,
+                  'y': y_ref,
+                  'z': z_ref,
+                  'dx': dotx_ref,
+                  'dy': doty_ref,
+                  'dz': dotz_ref,
+                  'ddx': ddotx_ref,
+                  'ddy': ddoty_ref,
+                  'ddz': ddotz_ref,
+                  'psi': psi_ref,
+                  'qz ref': qz_ref,
+                  'time': time}    
+    mydir = os.path.abspath(sys.path[0]) # sets main directory
+    outfile = open(mydir + '/data/' + file_name, 'wb')
+    pickle.dump(trajectory, outfile)
+    outfile.close()

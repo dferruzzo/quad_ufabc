@@ -212,7 +212,7 @@ def callback_velocity(data):
 def controller_node():
 
     """
-    Function that defines the controller node. The controller is responsible for the attitude and position tracking of the quadrotor.
+    Instatiate the controller node. The controller is responsible for the attitude and position tracking of the quadrotor. All at once.
     """
 
     #Initialize controller node
@@ -243,8 +243,8 @@ def controller_node():
     controller = Controller()
     ############################# TRAJECTORY PLANNER ###############################################
 
-    #Import the desired trajectory computed by 'trajectory_generator.py' executable.
-    infile = open(mydir + '/'+'data/trajectory_3.p', 'rb')
+    #Import the desired trajectory computed by 'trajectory_generator.py' executable.    
+    infile = open(mydir + '/'+'data/trajectory_3.p', 'rb')    
     #infile = open(mydir + '/'+'data/trajectory_2.p', 'rb')
     traj = pickle.load(infile)
     infile.close()

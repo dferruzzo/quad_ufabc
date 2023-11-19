@@ -20,6 +20,7 @@ class EKF:
         self.pub_att = rospy.Publisher(pub_att_name, Quaternion, queue_size=10)
         self.pub_pos = rospy.Publisher(pub_pos_name, Vector3, queue_size=10)        
         self.pub_vel = rospy.Publisher(pub_vel_name, Vector3, queue_size=10)    
+        
         self.sub_sta = rospy.Subscriber(sub_sta_name, ModelStates, self.states_callback)             
         
     def states_callback(self, data):
