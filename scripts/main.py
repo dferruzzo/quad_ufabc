@@ -7,17 +7,15 @@ def start_control():
     rospy.loginfo('Starting Quadrotor Control Node...')
 
     package = 'quad_ufabc'
-    executable_control = 'control_node.py'
+    executable = 'control_node.py'
+    node_name = 'control_node'
 
-    node_control = roslaunch.core.Node(package, executable_control)
+    node = roslaunch.core.Node(package=package, node_type=executable, name=node_name)
+    launch = roslaunch.scriptapi.ROSLaunch()
+    launch.start()
+    process = launch.launch(node)
 
-    launch_control = roslaunch.scriptapi.ROSLaunch()
-
-    launch_control.start()
-
-    controller = launch_control.launch(node_control)
-
-    if controller.is_alive():
+    if process.is_alive():
         print('')
         print('Control Initialized')
         print('')
@@ -26,13 +24,15 @@ def start_estimator():
     rospy.loginfo('Starting Estimation Node...')
     
     package = 'quad_ufabc'
-    executable_estimation = 'estimation_node.py'
-    node_estimation = roslaunch.core.Node(package, executable_estimation)
-    launch_estimation = roslaunch.scriptapi.ROSLaunch()
-    launch_estimation.start()
-    estimation = launch_estimation.launch(node_estimation)
+    executable = 'estimation_node.py'
+    node_name = 'estimation_node'
+    
+    node = roslaunch.core.Node(package=package, node_type=executable, name=node_name)
+    launch = roslaunch.scriptapi.ROSLaunch()
+    launch.start()
+    process = launch.launch(node)
 
-    if estimation.is_alive():
+    if process.is_alive():
         print('')
         print('Estimation Initialized')
         print('')

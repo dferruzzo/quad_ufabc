@@ -41,6 +41,6 @@ if __name__ == '__main__':
     rate.sleep()
     rospy.spin()
     try:
-        EKF()
+        EKF()        
     except rospy.ROSInterruptException:
         pass
