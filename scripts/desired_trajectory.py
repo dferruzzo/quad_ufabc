@@ -53,7 +53,7 @@ def trajectory() -> None:
         rate.sleep()
         time_end = rospy.Time.now()
         duration = time_end - time_begin
-        rospy.loginfo("Duration: " + str(duration.to_sec()) + " secs")
+        #rospy.loginfo("Duration: " + str(duration.to_sec()) + " secs")
     
 if __name__ == '__main__':
     try:
