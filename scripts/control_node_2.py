@@ -40,7 +40,7 @@ class Control:
         pub_control_output_name = '/quad/control/output'
 
         self.sub_att = rospy.Subscriber(sub_att_name, Quaternion, self.callback_attitude)
-        self.pos_att = rospy.Subscriber(sub_pos_name, Vector3, self.callback_position)
+        self.sub_pos = rospy.Subscriber(sub_pos_name, Vector3, self.callback_position)
         self.sub_vel = rospy.Subscriber(sub_vel_name, Vector3, self.callback_velocity)
         
         self.pub_control_output = rospy.Publisher(pub_control_output_name, Vector4,queue_size=10)
