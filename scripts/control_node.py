@@ -212,6 +212,7 @@ def callback_velocity(data):
 def controller_node():
 
     """
+    @diego.ferruzzo
     Instatiate the controller node. The controller is responsible for the attitude and position tracking of the quadrotor. All at once.
     """
 
@@ -291,6 +292,7 @@ def controller_node():
         
         # While step is smaller than the trajectory size
         if step < len(traj['x']):
+            
             # Translation real states
             att_real = np.asarray(quad_ufabc.attitude_euler).reshape(3,1)
             pos_real = np.asarray(quad_ufabc.position).reshape(3,1)

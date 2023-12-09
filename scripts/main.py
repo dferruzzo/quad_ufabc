@@ -38,6 +38,10 @@ def start_estimator():
         print('')
 
 def main():
+    # TODO:
+    # 1. [DONE] desired_trajectory.py (08/12/2023) Criar um nó para publicar a trajetória desejada com um tópico.
+    
+    
     rospy.init_node('Main')
     start_estimator()
     rospy.sleep(1)
