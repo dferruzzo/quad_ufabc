@@ -305,6 +305,7 @@ def controller_node():
             qz = traj['qz ref'][step]
            
             # Estimated states from Error State Kalman Filter
+            # esse quaternion representa a attitude do veículo no sistema inercial
             q_est = np.array([[qw_est, qx_est, qy_est, qz_est]]).T
 
             pos_est = np.array([[x_est, y_est, z_est]]).T
