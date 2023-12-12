@@ -77,7 +77,18 @@ def Euler2Quat(euler):
 
     return q
 
-
+def Quat2Euler(q):
+    
+    qw = q[0]
+    qx = q[1]
+    qy = q[2]
+    qz = q[3]
+    euler = np.zeros((3,1)) # [phi, theta, psi]'
+    euler[0] = np.arctan2(2*(qw*qx+qy*qz),1-2*(qx**2+qy**2)) # phi
+    euler[1] = -np.pi/2 + 2*np.arctan2(np.sqrt(1+2*(qw*qy-qx*qz)),np.sqrt(1-2*(qw*qy-qx*qz))) # theta
+    euler[2] = np.atan2(2*(qw*qz+qx*qy),1-2*(qy**2+qz**2))
+    return euler
+    
 def Conj(q):
 
     q1_c = -q[0]

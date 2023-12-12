@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 #from rospy_tutorials.msg import Floats
 
 from quad_ros import quad_robot
-from quat_utils import QuatProd
+from quat_utils import QuatProd, Quat2Euler
 from quad_control import Controller
 from std_msgs.msg import Bool, Float32
 from geometry_msgs.msg import Vector3, Quaternion, Pose, Vector3Stamped, PoseStamped
@@ -304,10 +304,16 @@ def controller_node():
             accel_ref = np.array([[traj['ddx'][step], traj['ddy'][step], traj['ddz'][step]]]).T
             qz = traj['qz ref'][step]
            
+            # computa os angulos de Euler da trajetória a seguir no sistema inercial
+            euler_traj = Quat2Euler(qz)
+                        
             # Estimated states from Error State Kalman Filter
             # esse quaternion representa a attitude do veículo no sistema inercial
             q_est = np.array([[qw_est, qx_est, qy_est, qz_est]]).T
 
+            # computa os angulos de euler estimados medidos no sistema inrcial
+            euler_est = Quat2Euler(q_est)
+            
             pos_est = np.array([[x_est, y_est, z_est]]).T
             
             # Angular rate from gyroscope
@@ -318,10 +324,21 @@ def controller_node():
             
             #Compute the desired quaternion
             q_des = QuatProd(q_pdes, qz)
+            
+            # calcula a atitude desejada em angulos de Euler no sistema inercial
+            euler_des = Quat2Euler(q_des)
 
+            # publica os angulos de Euler da referência, os estimados e os desejados (error)
+            """
+            Aqui publicar na forma de tópicos:
+                1. ângulos de Euler da trajetória de referência,
+                2. ângulos de Euler estimados do veículo,
+                3. ângulos de Euler desejados, ou erros.
+            """ 
+                
             #Get real quaternions
             q = np.asarray(quad_ufabc.attitude_quat).reshape(4,1)
-                        
+                                    
             # #Get real angular velocities 
             omega = np.asarray(quad_ufabc.angular_vel).reshape(3,1)
             
