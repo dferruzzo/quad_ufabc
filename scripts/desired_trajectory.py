@@ -16,6 +16,8 @@ import pickle
 import os, sys
 from trajectory_msgs.msg import JointTrajectoryPoint
 
+# Utilizar cartesian_control_msgs/CartesianTrajectoryPoint 
+
 def trajectory() -> None:
     pub = rospy.Publisher('desired_trajectory', JointTrajectoryPoint, queue_size=10)
     rospy.init_node('desired_trajectory')#, anonymous=False)
