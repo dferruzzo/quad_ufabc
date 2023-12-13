@@ -37,15 +37,33 @@ def start_estimator():
         print('Estimation Initialized')
         print('')
 
+def start_desired_traj(): 
+    rospy.loginfo('Publishing desired trajectory...')
+    
+    package = 'quad_ufabc'
+    executable = 'desired_trajectory.py'
+    node_name = 'desired_trajectory_node'
+    
+    node = roslaunch.core.Node(package=package, node_type=executable, name=node_name)
+    launch = roslaunch.scriptapi.ROSLaunch()
+    launch.start()
+    process = launch.launch(node)
+
+    if process.is_alive():
+        print('')
+        print('Publishing desired trajectory')
+        print('')
+
 def main():
+    # ------------------------------------------------------------------------------------------
     # TODO:
-    # 1. [DONE] desired_trajectory.py (08/12/2023) Criar um nó para publicar a trajetória desejada com um tópico.
-    
-    
+    # [ ] (13/12/2023) Publicar no nodo 'desired trajectory' a attitude em quaternio e em Euler.
+    # ------------------------------------------------------------------------------------------ 
     rospy.init_node('Main')
     start_estimator()
     rospy.sleep(1)
     start_control()
+    start_desired_traj()
     rospy.spin()
 
 if __name__ == "__main__":

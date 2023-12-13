@@ -51,7 +51,7 @@ find_package(catkin REQUIRED COMPONENTS
    FILES
    Num.msg
    Vector4.msg
-#   Message1.msg
+   Euler.msg
 #   Message2.msg
  )
 
