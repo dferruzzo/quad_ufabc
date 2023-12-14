@@ -34,10 +34,10 @@ class EKF:
         self.quad_pose = data.pose[2]    
         
         # quad_pose.orientation representa a attitute em quateernion
-        self.q[0] = self.quad_pose.orientation.x
-        self.q[1] = self.quad_pose.orientation.y
-        self.q[2] = self.quad_pose.orientation.z
-        self.q[3] = self.quad_pose.orientation.w
+        self.q[0] = self.quad_pose.orientation.w
+        self.q[1] = self.quad_pose.orientation.x
+        self.q[2] = self.quad_pose.orientation.y
+        self.q[3] = self.quad_pose.orientation.z
         # convertir o quaternio de attitude para angulos de Euler
         self.euler = Quat2Euler(self.q)
         # passar para ros msg 

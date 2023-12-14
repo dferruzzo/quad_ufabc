@@ -49,9 +49,17 @@ find_package(catkin REQUIRED COMPONENTS
 ## Generate messages in the 'msg' folder
  add_message_files(
    FILES
-   Num.msg
-   Vector4.msg
+   Accel.msg
+   CartesianPoint.msg
+   CartesianPointStamped.msg
    Euler.msg
+   Num.msg
+   Point.msg
+   Pose.msg
+   Quaternion.msg
+   Vector3.msg
+   Vector4.msg
+   Velocity.msg   
 #   Message2.msg
  )
 

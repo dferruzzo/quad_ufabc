@@ -57,7 +57,7 @@ def start_desired_traj():
 def main():
     # ------------------------------------------------------------------------------------------
     # TODO:
-    # [ ] (13/12/2023) Publicar no nodo 'desired trajectory' a attitude em quaternio e em Euler.
+    # [x] (13/12/2023) Publicar no nodo 'desired trajectory' a attitude em quaternio e em Euler.
     # ------------------------------------------------------------------------------------------ 
     rospy.init_node('Main')
     start_estimator()
