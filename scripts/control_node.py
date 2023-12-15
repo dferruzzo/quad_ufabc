@@ -344,18 +344,22 @@ def controller_node():
             
             #Attitude Control based in quaternion parametrization
             tau, error = controller.att_control_quat(q_est, q_des, omega_gyro)
+            tau_x = tau[0,0]
+            tau_y = tau[1,0]
+            tau_z = tau[2,0]
             
+            # controle de atitude utilziando angulos de Euler
+            #tau_x, tau_y, tau_z = att_control_PD(self, ang_atual, ang_vel_atual, ang_des)
             """
             # controle baseado em angulos de Euler
             psi_des = 0
             T, phi_des, theta_des = controller.pos_control_PD(pos_est, pos_ref, vel_real, vel_ref, accel_ref, psi_des)
             
-            controller.att_control_PD(ang_atual, ang_vel_atual, ang_des)
+            tau_x, tau_y, tau_z = controller.att_control_PD(ang_atual, ang_vel_atual, ang_des)
             """
-            
-            
+                        
             #Compute the rotors speeds from obtained inputs
-            w, _, _ = controller.f2w(T, [tau[0,0], tau[1,0], tau[2,0]])    
+            w, _, _ = controller.f2w(T, [tau_x, tau_y, tau_z])    
             
             #Send the command to quadrotor
             quad_ufabc.step(w/10)
