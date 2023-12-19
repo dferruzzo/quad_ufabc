@@ -54,12 +54,31 @@ def start_desired_traj():
         print('Publishing desired trajectory')
         print('')
 
+def start_recorder_node(): 
+    rospy.loginfo('Starting Recorder node...')
+    
+    package = 'quad_ufabc'
+    executable = 'bag_recorder_node.py'
+    node_name = 'bag_recorder_node'
+    
+    node = roslaunch.core.Node(package=package, node_type=executable, name=node_name)
+    launch = roslaunch.scriptapi.ROSLaunch()
+    launch.start()
+    process = launch.launch(node)
+
+    if process.is_alive():
+        print('')
+        print('Starting Recorder node')
+        print('')
+        
 def main():
-    # ------------------------------------------------------------------------------------------
+    # 
     # TODO:
-    # [x] (13/12/2023) Publicar no nodo 'desired trajectory' a attitude em quaternio e em Euler.
-    # ------------------------------------------------------------------------------------------ 
+    # [ ] Script para leitura do bag,
+    # [ ] Script para imprimir os tópicos de interesse.
+    #
     rospy.init_node('Main')
+    start_recorder_node()
     start_estimator()
     rospy.sleep(1)
     start_control()
