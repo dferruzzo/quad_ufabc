@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
-"""
-TODO:
-
-"""
+#
 import rospy
 import pickle
 import os, sys
@@ -65,12 +62,7 @@ class Control:
         self.attitude = data        
         
     def callback_trajectory(self, data):
-        """
-        TODO: 
-        [ ] computar erros
-        [ ] chamar os controladores
-        [ ] publicar a saída dos controladores        
-        """
+
         self.desired_trajectory.positions = data.positions
         self.desired_trajectory.velocities = data.velocities
         self.desired_trajectory.accelerations = data.accelerations

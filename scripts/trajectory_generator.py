@@ -46,7 +46,7 @@ file_name:str = 'trajectory_3.p'
 
 # Trajectory 3
 home = waypoint(0.6, 0.0, 0.0, 0.0, 0.0)
-wp1  = waypoint(1.0, 0.0, 1.0, np.pi/6, 5.0)
+wp1  = waypoint(0.6, 0.0, 2.0, np.pi/6, 5.0)
 wp2  = waypoint(1.5, 0.0, 2.0, np.pi/6, 10.0)
 wp3  = waypoint(2.0, 0.5, 2.0, np.pi/8, 15.0)
 wp4  = waypoint(2.0, 1.0, 2.0, 0, 20.0)

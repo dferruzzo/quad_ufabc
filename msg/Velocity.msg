@@ -1,2 +1,2 @@
-quad_ufabc/Vector3 linear
-quad_ufabc/Vector3 angular
+quad_ufabc/Point linear
+quad_ufabc/Point angular

@@ -10,6 +10,7 @@ import signal
 class RosbagRecord:
     def __init__(self):
         
+        file_name = 'dados'
         conf_file_path = os.path.join(rospkg.RosPack().get_path('quad_ufabc'), 'bags/')     
         script_file_path = os.path.join(rospkg.RosPack().get_path('quad_ufabc'), 'scripts/rosbag_script')     
         
@@ -24,7 +25,7 @@ class RosbagRecord:
             rospy.on_shutdown(self.stop_recording_handler)
 
             # Start recording.
-            command = "source " + self.record_script
+            command = "source " + self.record_script + ' ' + file_name
             self.p = subprocess.Popen(command, stdin=subprocess.PIPE, shell=True,cwd=self.record_folder, executable='/bin/bash')
 
             # Wait for shutdown signal to close rosbag record

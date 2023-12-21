@@ -73,12 +73,8 @@ def start_recorder_node():
         
 def main():
     # 
-    # TODO:
-    # [ ] Script para leitura do bag,
-    # [ ] Script para imprimir os tópicos de interesse.
-    #
     rospy.init_node('Main')
-    start_recorder_node()
+    #start_recorder_node()
     start_estimator()
     rospy.sleep(1)
     start_control()

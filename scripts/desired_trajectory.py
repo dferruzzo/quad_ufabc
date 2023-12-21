@@ -21,10 +21,6 @@ import numpy as np
 from quad_ufabc.msg import CartesianPointStamped
 # from cartesian_control_msgs.msg import CartesianTrajectoryPoint 
 
-# TODO:
-# [x] Utilizar cartesian_control_msgs/CartesianTrajectoryPoint
-# [x] Parece que a transformação Quat2Euler() não está funcionando como esperado. Testar. Resolvido! 
-
 def trajectory() -> None: 
    
     rospy.init_node('desired_trajectory')#, anonymous=False)
@@ -52,7 +48,7 @@ def trajectory() -> None:
 
         desired_trajectory.cartesian_point.pose.position.x = traj['x'][step]
         desired_trajectory.cartesian_point.pose.position.y = traj['y'][step]
-        desired_trajectory.cartesian_point.pose.position.z = traj['y'][step]
+        desired_trajectory.cartesian_point.pose.position.z = traj['z'][step]
         
         desired_trajectory.cartesian_point.velocity.linear.x = traj['dx'][step]
         desired_trajectory.cartesian_point.velocity.linear.y = traj['dy'][step]

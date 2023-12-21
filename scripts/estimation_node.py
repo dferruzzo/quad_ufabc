@@ -50,7 +50,7 @@ class EKF:
         self.pub_att.publish(self.quad_pose.orientation)
         self.pub_eul.publish(self.quad_euler)
         self.pub_pos.publish(self.quad_pose.position)
-        self.pub_vel.publish(self.quad_twist.angular)
+        self.pub_vel.publish(self.quad_twist.linear)
 
 if __name__ == '__main__':
     node_name = 'estimator'

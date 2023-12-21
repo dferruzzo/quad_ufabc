@@ -56,10 +56,12 @@ find_package(catkin REQUIRED COMPONENTS
    Num.msg
    Point.msg
    Pose.msg
-   Quaternion.msg
+   Quaternion1.msg
    Vector3.msg
    Vector4.msg
-   Velocity.msg   
+   Velocity.msg
+   PositionControllerOutput.msg
+   PositionControllerOutputStamped.msg
 #   Message2.msg
  )
 

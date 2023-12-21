@@ -1,4 +1,5 @@
 import numpy as np
+from quat_utils import QuatProd, Quat2Euler
 #from numpy.core.numeric import NaN
 #from quat_utils import DerivQuat
 #from scipy.linalg import solve_continuous_are as solve_lqr
@@ -227,7 +228,6 @@ class Controller:
         
         return ln_q
 
-
     def att_control_quat(self, q_atual, q_des, ang_vel_atual):
         
         """
@@ -279,8 +279,7 @@ class Controller:
         #Compute the desired torques
         tau = self.J@u + np.cross(ang_vel_atual, self.J@ang_vel_atual, axis=0)
 
-        return tau, error
-    
+        return tau, error    
 
     def pos_control_quat(self, pos_atual, pos_des, vel_atual, vel_des, accel_des):
         
@@ -292,18 +291,20 @@ class Controller:
         error_pos = pos_atual - pos_des
         error_vel = vel_atual - vel_des
 
+        """
+        # ESSA PARTE DO CÓDIGO NÃO FUNCIONA
         # aceleração desejada normalizada |accel_des| = 1
         n = accel_des/np.linalg.norm(accel_des)
         # velocidade desejada normalizada |vel_des| = 1
         t = vel_des/np.linalg.norm(vel_des)
         # produto vetorial dos vetores t e n
         b = np.cross(t, n, axis=0)
-
+       
         if np.isnan(b).any:
-            error_pos = error_pos
+            error_pos = error_pos            
         else:
             error_pos = (error_pos.T@n)@n + (error_pos.T@b)@b
-        
+        """
         
         #Gains for real states
         #Proportional gain
@@ -335,7 +336,37 @@ class Controller:
         T = Fu_norm*z
         # print(T)
         return Fu_norm, q_des
+    
+    def pos_control_quat_v1(self, pos_atual, pos_des, vel_atual, vel_des, q_des):
+        
+        """
+        Function that computes the desired thrust and quaternion for quadrotor based on desired trajectory.
+        """
 
+        # Compute position and velocity error
+        error_pos = pos_atual - pos_des
+        error_vel = vel_atual - vel_des
+
+        #Gains for Estimated States
+        #Proportional gain
+        Kp = np.diag([4, 4, 20])*2.3
+        # #Derivative gain
+        Kd = np.diag([3.5, 3.5, 7])*1.3
+
+        #Control force in inertial frame
+        Fu = -Kp@error_pos - Kd@error_vel - 1.05*np.array([[0, 0, -9.8]]).T
+
+        #Desired quaternion
+        z = np.array([[0, 0, 1]]).T
+        Fu_norm = np.linalg.norm(Fu)
+        q = np.zeros((4,1))
+        q[0] = (np.vdot(z, Fu) + Fu_norm)
+        q[1:4] =  np.cross(z, Fu, axis=0)
+        q_norm = np.linalg.norm(q)
+        q_p = q/q_norm
+        q_erro = QuatProd(q_p, q_des)        
+        
+        return Fu_norm, q_erro
 
     #################################### TRAJECTORY PLANNER FUNCTIONS ######################################################
     
@@ -517,7 +548,6 @@ class Controller:
                     s_list.append(s)
         
         return x_list, v_list, a_list, j_list, s_list
-
 
     #Get the optimal acceleration functions coefficients 
     def getCoeff_accel(self, waypoints, t):
