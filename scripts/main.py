@@ -20,6 +20,24 @@ def start_control():
         print('Control Initialized')
         print('')
 
+def start_pos_vel_control():
+
+    rospy.loginfo('Starting position and velocity Quadrotor Control Node...')
+
+    package = 'quad_ufabc'
+    executable = 'pos_vel_control.py'
+    node_name = 'position_velocity_control_node'
+
+    node = roslaunch.core.Node(package=package, node_type=executable, name=node_name)
+    launch = roslaunch.scriptapi.ROSLaunch()
+    launch.start()
+    process = launch.launch(node)
+
+    if process.is_alive():
+        print('')
+        print('Position and Velocity Control Initialized')
+        print('')
+        
 def start_estimator():
     rospy.loginfo('Starting Estimation Node...')
     
@@ -78,6 +96,7 @@ def main():
     start_estimator()
     rospy.sleep(1)
     start_control()
+    start_pos_vel_control()
     start_desired_traj()
     rospy.spin()
 

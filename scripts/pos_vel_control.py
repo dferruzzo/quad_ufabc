@@ -2,28 +2,66 @@
 #
 import rospy
 import numpy as np
-from quad_ros import quad_robot
-from quat_utils import QuatProd
+#from quad_ros import quad_robot
+from quat_utils import QuatProd, Quat2Euler
 from quad_control import Controller
-from std_msgs.msg import Bool, Float32
+#from std_msgs.msg import Bool, Float32
 from geometry_msgs.msg import Quaternion, Vector3, Pose, Vector3Stamped, PoseStamped
-from quad_ufabc.msg import CartesianPointStamped, Pose, Velocity, Accel, Point, Quaternion1, Num, PositionControllerOutputStamped
+from quad_ufabc.msg import CartesianPointStamped, Pose, Velocity, Accel, Point, Quaternion1, Num, Euler, PositionControllerOutputStamped
 
-from sensor_msgs.msg import Imu
+#from sensor_msgs.msg import Imu
 
-class Pos_Vel_Control:
+class Pos_Vel_Control(Controller):
+    """
+    A classe herda os atributos e métodos da classe Controller e se subscribe aos seguintes tópicos:
     
+        - /quad/kf/attitude,
+        - /quad/kf/position,
+        - /quad/kf/vel,
+        - /desired_trajectory,
+        
+    publica o  tópico 
+    
+        - /quad/control/position_controller_output
+    
+    que é do tipo tipo quad_ufabc/PositionControllerOutputStamped
+    
+    e que publica,
+        
+        - O tempo na forma de stamp,
+        - O empuxo total, thrust,    
+        - O erro de atitude em quaternion (w,x,y,z),
+        - O erro de atitude em ângulos de Euler (phi, theta, psi)
+    
+    Nesta versão implemento o método 'pos_control_quat_v1',
+    
+    Entradas: 
+
+        - pos_atual,
+        - pos_des,
+        - vel_atual,
+        - vel_des,
+        - orientation_des
+        
+    Salidas:
+    
+        - T, o empuxo total 
+        - q_erro, o erro de atitude que é recebido pelo controle de atitude.
+        - erro de atitude em ângulos de Euler.
+        
+    """    
     def __init__(self) -> None:
         
         self.pos_atual = Vector3()              # posição atual
         self.vel_atual = Vector3()              # velocidade atual
         self.orientation_atual = Quaternion()   # orientação atual
+        self.orien_atual_euler = Euler()        # orientação em Euler
         
         self.pos_des = Point()                  # posição desejada
         self.vel_des = Point()                  # velocidade desejada
         self.orientation_des = Quaternion1()    # orientação desejada
                 
-        self.controller = Controller()          # Instancia o controlador 
+        #self.controller = Controller()          # Instancia o controlador 
         
         self.pos_control_output = PositionControllerOutputStamped()
         
@@ -68,23 +106,31 @@ class Pos_Vel_Control:
         self.control()      
     
     def control(self):
-        #       
-        T, q_erro = self.controller.pos_control_quat_v1(
+        #   
+        # T é o empuxo total
+        # q_pdes é o quaternio de atitude desejado correspondente
+        #    
+        T, q_erro = self.pos_control_quat_v1(
             self.point_to_np_array(self.pos_atual),
             self.point_to_np_array(self.pos_des),
             self.point_to_np_array(self.vel_atual),
             self.point_to_np_array(self.vel_des),
             self.quat_to_np_array(self.orientation_des))
-        # T é o empuxo total
-        # q_pdes é o quaternio de atitude desejado correspondente
+        #
+        euler_out = Quat2Euler(q_erro)
+        self.orien_atual_euler.phi = euler_out[0]
+        self.orien_atual_euler.theta = euler_out[1]
+        self.orien_atual_euler.psi = euler_out[2]       
+        #        
         self.pos_control_output.position_controller_output.thrust.num = T
         self.pos_control_output.position_controller_output.orientation_set_point.w = q_erro[0]
         self.pos_control_output.position_controller_output.orientation_set_point.x = q_erro[1]
         self.pos_control_output.position_controller_output.orientation_set_point.y = q_erro[2]
         self.pos_control_output.position_controller_output.orientation_set_point.z = q_erro[3]     
-        
+        self.pos_control_output.position_controller_output.euler_set_point =  self.orien_atual_euler
+        #        
         self.pos_control_output.header.stamp = rospy.Time.now()
-
+        #
         self.pub_pos_control_output.publish(self.pos_control_output)
         
     def point_to_np_array(self, point):
