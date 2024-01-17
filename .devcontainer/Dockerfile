@@ -10,4 +10,4 @@ RUN apt -y update && apt install -y git python3-pip libqt5gui5 ros-noetic-ros-co
 
 ENV QT_DEBUG_PLUGINS=1
 
-WORKDIR /catkin_ws/src
+WORKDIR /workspace/src
