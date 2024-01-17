@@ -1,9 +1,0 @@
-{
-    "name": "quad_ufabc",
-    //"dockerFile": "Dockerfile",
-    //"image":"mcr.microsoft.com/devcontainers/universal:2",
-    "image": "devrt/ros-devcontainer-vscode:noetic-desktop",
-    "remoteUser": "${env:USERNAME}",
-    "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/src,type=bind",
-    "workspaceFolder": "/workspaces/src"
-}
