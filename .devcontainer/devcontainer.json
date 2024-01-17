@@ -1,6 +1,6 @@
 {
     "image":"mcr.microsoft.com/devcontainers/universal:2",
     "remoteUser": "${env:USERNAME}",
-    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace/src,type=bind",
-    "workspaceFolder": "/workspace/src"
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/src,type=bind",
+    "workspaceFolder": "/workspaces/src"
 }
