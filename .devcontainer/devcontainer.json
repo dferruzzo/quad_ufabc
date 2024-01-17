@@ -1,11 +1,8 @@
 {
     "name": "quad_ufabc",
-    "dockerFile": "Dockerfile",
-    //"image":"mcr.microsoft.com/devcontainers/universal:2",
+    //"dockerFile": "Dockerfile",
+    "image":"mcr.microsoft.com/devcontainers/universal:2",
     "remoteUser": "${env:USERNAME}",
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/src,type=bind",
     "workspaceFolder": "/workspaces/src"
-
-
-
 }
