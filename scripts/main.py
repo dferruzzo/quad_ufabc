@@ -96,7 +96,7 @@ def main():
     start_estimator()
     rospy.sleep(1)
     start_control()
-    start_pos_vel_control()
+    #start_pos_vel_control()
     start_desired_traj()
     rospy.spin()
 

@@ -1,6 +1,6 @@
 {
     "image":"mcr.microsoft.com/devcontainers/universal:2",
     "remoteUser": "${env:USERNAME}",
-    "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/src,type=bind",
-    "workspaceFolder": "/workspaces/src"
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/src/quad_ufabc,type=bind",
+    "workspaceFolder": "/workspaces/src/quad_ufabc"
 }
