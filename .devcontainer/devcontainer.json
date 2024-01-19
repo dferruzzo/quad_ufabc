@@ -1,6 +1,0 @@
-{
-    "image":"mcr.microsoft.com/devcontainers/base:ubuntu22.04",
-    "remoteUser": "${env:USERNAME}",
-    "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/src/quad_ufabc,type=bind",
-    "workspaceFolder": "/workspaces/src/quad_ufabc"
-}
