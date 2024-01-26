@@ -62,6 +62,7 @@ find_package(catkin REQUIRED COMPONENTS
    Velocity.msg
    PositionControllerOutput.msg
    PositionControllerOutputStamped.msg
+   AttitudeControllerOutputStamped.msg
 #   Message2.msg
  )
 

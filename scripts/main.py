@@ -110,7 +110,7 @@ def start_recorder_node():
 def main():
     # 
     rospy.init_node('Main')
-    #start_recorder_node()       # novo
+    start_recorder_node()       # novo
     start_estimator()   
     rospy.sleep(1)
     start_control()

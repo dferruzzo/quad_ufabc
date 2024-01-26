@@ -7,7 +7,7 @@ from quat_utils import QuatProd, Quat2Euler
 from quad_control import Controller
 #from std_msgs.msg import Bool, Float32
 from geometry_msgs.msg import Quaternion, Vector3, Pose, Vector3Stamped, PoseStamped
-from quad_ufabc.msg import CartesianPointStamped, Pose, Velocity, Accel, Point, Quaternion1, Num, Euler, PositionControllerOutputStamped
+from quad_ufabc.msg import CartesianPointStamped, Pose, Velocity, Accel, Point, Quaternion1, Num, Euler, PositionControllerOutputStamped, AttitudeControllerOutputStamped 
 
 class Attitude_Control(Controller):
     """
@@ -44,6 +44,7 @@ class Attitude_Control(Controller):
         self.orientation_atual = Quaternion()
         self.pos_control_output = PositionControllerOutputStamped()
         self.attitude_error_quat = Quaternion1()
+        self.att_control_output = AttitudeControllerOutputStamped()
         
         # Subscrições
         sub_att_name = '/quad/kf/attitude'
@@ -54,20 +55,29 @@ class Attitude_Control(Controller):
         self.pos_cont_out = rospy.Subscriber(sub_pos_cont_out,\
             PositionControllerOutputStamped,\
                 self.callback_pos_control_out)
-    
+        
+        # Publicações
+        pub_att_cont_out = '/quad/control/attitude_controller_output'
+        """
+        self.pub_att_control_output = rospy.Publisher(pub_att_cont_out,\
+            PositionControllerOutputStamped,\
+                queue_size=10)        
+        """
+        
     def callback_attitude(self, data):
         # orientação atual
         self.orientation_atual = data
     
     def callback_pos_control_out(self, data):
         self.pos_control_output = data
-        self.attitude_error_quat = self.pos_control_output.orientation_set_point
+        self.attitude_error_quat =\
+            self.pos_control_output.position_controller_output.orientation_set_point
         self.control()
     
     def control(self):
-        #def att_control_quat(self, q_atual, q_des, ang_vel_atual):
-        
-        pass
+        # chama o controle de attitude 
+        # publica os três torques
+        return None
     
     
 if __name__ == '__main__':

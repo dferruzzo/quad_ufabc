@@ -1,17 +1,21 @@
-<?xml_version="1.0" ?>
+<?xml_version = "1.0"?>
 <sdf version="1.4">
 
 	<world name="default">
 
 		<physics name='default_physics' default='0' type='ode'>
-		    <max_step_size>0.001</max_step_size>
-		    <real_time_factor>1</real_time_factor>
-		    <real_time_update_rate>500</real_time_update_rate>
-		    <ode>
-		        <constraints>
-		        <contact_max_correcting_vel>10000.0</contact_max_correcting_vel>
-		        </constraints>
-		    </ode>
+			<max_step_size>0.001</max_step_size>
+			<real_time_factor>1</real_time_factor>
+			<!-- 
+				setar o real_time_update_rate a 250 para computador com 4 cores.
+				setar o real_time_update_rate a 590 para computador com mais cores.
+			-->
+			<real_time_update_rate>250</real_time_update_rate>
+			<ode>
+				<constraints>
+					<contact_max_correcting_vel>10000.0</contact_max_correcting_vel>
+				</constraints>
+			</ode>
 		</physics>
 
 		<scene>
@@ -20,7 +24,7 @@
 					<speed>12</speed>
 				</clouds>
 			</sky>
-			
+
 			<shadows>0</shadows>
 		</scene>
 
