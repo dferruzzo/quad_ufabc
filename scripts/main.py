@@ -37,6 +37,24 @@ def start_pos_vel_control():
         print('')
         print('Position and Velocity Control Initialized')
         print('')
+
+def start_attitude_control():
+
+    rospy.loginfo('Starting attitude Control Node...')
+
+    package = 'quad_ufabc'
+    executable = 'attitude_control.py'
+    node_name = 'attitude_control_node'
+
+    node = roslaunch.core.Node(package=package, node_type=executable, name=node_name)
+    launch = roslaunch.scriptapi.ROSLaunch()
+    launch.start()
+    process = launch.launch(node)
+
+    if process.is_alive():
+        print('')
+        print('Attitude Control Initialized')
+        print('')
         
 def start_estimator():
     rospy.loginfo('Starting Estimation Node...')
@@ -92,12 +110,13 @@ def start_recorder_node():
 def main():
     # 
     rospy.init_node('Main')
-    start_recorder_node()
-    start_estimator()
+    #start_recorder_node()       # novo
+    start_estimator()   
     rospy.sleep(1)
     start_control()
-    #start_pos_vel_control()
-    start_desired_traj()
+    start_pos_vel_control()     # novo
+    start_attitude_control()   # novo
+    start_desired_traj()        # novo
     rospy.spin()
 
 if __name__ == "__main__":

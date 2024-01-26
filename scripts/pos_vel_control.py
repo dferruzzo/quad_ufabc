@@ -52,34 +52,41 @@ class Pos_Vel_Control(Controller):
     """    
     def __init__(self) -> None:
         
+        # Parâmetros
         self.pos_atual = Vector3()              # posição atual
         self.vel_atual = Vector3()              # velocidade atual
         self.orientation_atual = Quaternion()   # orientação atual
-        self.orien_atual_euler = Euler()        # orientação em Euler
-        
+        self.orien_atual_euler = Euler()        # orientação em Euler        
         self.pos_des = Point()                  # posição desejada
         self.vel_des = Point()                  # velocidade desejada
-        self.orientation_des = Quaternion1()    # orientação desejada
-                
+        self.orientation_des = Quaternion1()    # orientação desejada            
         #self.controller = Controller()          # Instancia o controlador 
-        
         self.pos_control_output = PositionControllerOutputStamped()
-        
         self.desired_trajectory = CartesianPointStamped()   # valores de trajetória desejados
         
+        # Subscrições
         sub_att_name = '/quad/kf/attitude'
         sub_pos_name = '/quad/kf/position'      # nome do tópico de posição
         sub_vel_name = '/quad/kf/vel'           # nome do tópico de velocidade
         sub_tra_name = '/desired_trajectory'    # nome do tópico de trajetória desejada
+        self.sub_att = rospy.Subscriber(sub_att_name,\
+            Quaternion,\
+                self.callback_attitude)
+        self.sub_pos = rospy.Subscriber(sub_pos_name,\
+            Vector3,\
+                self.callback_position)
+        self.sub_vel = rospy.Subscriber(sub_vel_name,\
+            Vector3,\
+                self.callback_velocity)
+        self.sub_tra = rospy.Subscriber(sub_tra_name,\
+            CartesianPointStamped,\
+                self.callback_trajectory)
 
+        # Publicações
         pub_pos_cont_out_name = '/quad/control/position_controller_output'
-
-        self.sub_att = rospy.Subscriber(sub_att_name, Quaternion, self.callback_attitude)
-        self.sub_pos = rospy.Subscriber(sub_pos_name, Vector3, self.callback_position)
-        self.sub_vel = rospy.Subscriber(sub_vel_name, Vector3, self.callback_velocity)
-        self.sub_tra = rospy.Subscriber(sub_tra_name, CartesianPointStamped, self.callback_trajectory)
-        
-        self.pub_pos_control_output = rospy.Publisher(pub_pos_cont_out_name, PositionControllerOutputStamped, queue_size=10)        
+        self.pub_pos_control_output = rospy.Publisher(pub_pos_cont_out_name,\
+            PositionControllerOutputStamped,\
+                queue_size=10)        
         
     def callback_position(self, data):
         # a posição atual
@@ -95,8 +102,7 @@ class Pos_Vel_Control(Controller):
 
     def callback_attitude(self, data):
         # orientação atual
-        self.orientation_atual = data
-        pass       
+        self.orientation_atual = data      
         
     def callback_trajectory(self, data):
         self.pos_des = data.cartesian_point.pose.position
@@ -106,7 +112,7 @@ class Pos_Vel_Control(Controller):
         self.control()      
     
     def control(self):
-        #   
+        # Saída:  
         # T é o empuxo total
         # q_pdes é o quaternio de atitude desejado correspondente
         #    
@@ -141,7 +147,7 @@ class Pos_Vel_Control(Controller):
 
 if __name__ == '__main__':
     try:
-        node_name = 'controller_2'
+        node_name = 'pos_vel_controller_2'
         rospy.init_node(node_name)
         Pos_Vel_Control()        
         rate = rospy.Rate(50) # 50hz

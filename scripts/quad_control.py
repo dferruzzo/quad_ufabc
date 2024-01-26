@@ -340,7 +340,8 @@ class Controller:
     def pos_control_quat_v1(self, pos_atual, pos_des, vel_atual, vel_des, q_des):
         
         """
-        Function that computes the desired thrust and quaternion for quadrotor based on desired trajectory.
+        Function that computes the desired thrust and quaternion for quadrotor
+        based on desired trajectory.
         """
 
         # Compute position and velocity error
