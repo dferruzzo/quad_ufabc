@@ -1,23 +1,30 @@
 # quad_ufabc
 
-Quadrirrotor em ROS Gazebo.
+Quadrirrotor em ROS Noetic Gazebo gzweb.
 
-## ROS Noetic
+## ROS Noetic + Gazebo + gzweb
 
-Precisa:
+[https://hub.docker.com/r/dferruzzo/ros-noetic-gazebo-gzweb](https://hub.docker.com/r/dferruzzo/ros-noetic-gazebo-gzweb)
 
-1. instalar ROS Noetic.
-2. criar um workspace
-3. clonar o branch `master` dentro da pasta `src`
+```
+docker run \
+--rm \
+-it \
+--name [name-of-your-container] \
+-v [path-to-quad-ufabc]:/home/catkin_ws/src/quad-ufabc \
+-v [path-to-quad-ufabc]:/root/gzweb/http/client/assets/quad-ufabc \
+-p 8080:8080 \
+dferruzzo/ros-noetic-gazebo-gzweb:v1.02
+```
 
-## Como clonar o repo
+## Clonar o repo
 
-`git clone -b master https://github.com/dferruzzo/quad_ufabc.git`
+`git clone https://github.com/dferruzzo/quad_ufabc.git`
 
 ## Iniciar o Workspace
 
 ```
-cd /path/to/work/directory/src
+cd /catkin_ws/src
 source /opt/ros/noetic/setup.bash
 catkin_init_workspace
 cd ..
@@ -41,4 +48,3 @@ O gzweb está disponível no `http://localhost:8080`
 ## Iniciar o main.py
 
 `rosrun quad_ufabc main.py`
-
