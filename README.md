@@ -2,6 +2,10 @@
 
 Quadrirrotor em ROS Noetic Gazebo gzweb.
 
+## Clonar o repo
+
+`git clone https://github.com/dferruzzo/quad_ufabc.git`
+
 ## ROS Noetic + Gazebo + gzweb
 
 [https://hub.docker.com/r/dferruzzo/ros-noetic-gazebo-gzweb](https://hub.docker.com/r/dferruzzo/ros-noetic-gazebo-gzweb)
@@ -16,10 +20,6 @@ docker run \
 -p 8080:8080 \
 dferruzzo/ros-noetic-gazebo-gzweb:v1.02
 ```
-
-## Clonar o repo
-
-`git clone https://github.com/dferruzzo/quad_ufabc.git`
 
 ## Iniciar o Workspace
 
