@@ -33,9 +33,13 @@ catkin_make
 
 ## Iniciar o Projeto com gazebo
 
+Precisa criar o container com permissões para acessar a tela.
+
 `roslaunch quad_ufabc quad.launch`
 
 ## Iniciar o projeto com gzweb
+
+Uma forma mais fácil é utilizar o gzweb, só precisa liberar o porto 8080 como mostrado no `docker run`.
 
 ```
 roslaunch quad_ufabc quad.launch gui:=false
