@@ -231,7 +231,8 @@ class Controller:
     def att_control_quat(self, q_atual, q_des, ang_vel_atual):
         
         """
-        Function that computes the desired torques for quadrotor based on desired quaternion and angular velocities.
+        Computes the desired torques for quadrotor based on
+        desired quaternion and angular velocities.
         """
 
         #Compute quaternion's log mapping

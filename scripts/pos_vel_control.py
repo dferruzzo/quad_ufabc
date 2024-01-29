@@ -12,44 +12,34 @@ from quad_ufabc.msg import CartesianPointStamped, Pose, Velocity, Accel, Point, 
 #from sensor_msgs.msg import Imu
 
 class Pos_Vel_Control(Controller):
+    
     """
     A classe herda os atributos e métodos da classe Controller e se subscribe aos seguintes tópicos:
-    
         - /quad/kf/attitude,
         - /quad/kf/position,
         - /quad/kf/vel,
         - /desired_trajectory,
-        
     publica o  tópico 
-    
         - /quad/control/position_controller_output
-    
     que é do tipo tipo quad_ufabc/PositionControllerOutputStamped
-    
     e que publica,
-        
         - O tempo na forma de stamp,
         - O empuxo total, thrust,    
         - O erro de atitude em quaternion (w,x,y,z),
         - O erro de atitude em ângulos de Euler (phi, theta, psi)
-    
     Nesta versão implemento o método 'pos_control_quat_v1',
-    
-    Entradas: 
-
+    Entradas:
         - pos_atual,
         - pos_des,
         - vel_atual,
         - vel_des,
         - orientation_des
-        
     Salidas:
-    
         - T, o empuxo total 
         - q_erro, o erro de atitude que é recebido pelo controle de atitude.
         - erro de atitude em ângulos de Euler.
-        
     """    
+    
     def __init__(self) -> None:
         
         # Parâmetros
