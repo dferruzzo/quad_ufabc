@@ -44,7 +44,6 @@ class quad_robot:
         self.motor_vel.data = motor_vel
         self.vel_pub.publish(self.motor_vel)
 
-
     def pose_read(self, data):
         """
         Stores the position and attitude data on the class

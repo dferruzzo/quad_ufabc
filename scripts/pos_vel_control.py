@@ -7,7 +7,9 @@ from quat_utils import QuatProd, Quat2Euler
 from quad_control import Controller
 #from std_msgs.msg import Bool, Float32
 from geometry_msgs.msg import Quaternion, Vector3, Pose, Vector3Stamped, PoseStamped
-from quad_ufabc.msg import CartesianPointStamped, Pose, Velocity, Accel, Point, Quaternion1, Num, Euler, PositionControllerOutputStamped
+from quad_ufabc.msg import CartesianPointStamped,\
+    Pose, Velocity, Accel, Point, Quaternion1,\
+        Num, Euler, PositionControllerOutputStamped
 
 #from sensor_msgs.msg import Imu
 
@@ -128,12 +130,6 @@ class Pos_Vel_Control(Controller):
         self.pos_control_output.header.stamp = rospy.Time.now()
         #
         self.pub_pos_control_output.publish(self.pos_control_output)
-        
-    def point_to_np_array(self, point):
-        return np.array([[point.x, point.y, point.z]]).T
-    
-    def quat_to_np_array(self, quat):
-        return np.array([[quat.w, quat.x, quat.y, quat.z]]).T
 
 if __name__ == '__main__':
     try:

@@ -14,7 +14,9 @@ class EKF:
         pub_att_name = '/quad/kf/attitude'
         pub_eul_name = '/quad/kf/euler'
         pub_pos_name = '/quad/kf/position'
-        pub_vel_name = '/quad/kf/vel'
+        pub_vel_lin_name = '/quad/kf/vel_lin'
+        pub_vel_ang_name = '/quad/kf/vel_ang'
+        
         sub_sta_name = '/gazebo/model_states'
         
         self.quad_pose = Pose()
@@ -26,7 +28,9 @@ class EKF:
         self.pub_att = rospy.Publisher(pub_att_name, Quaternion, queue_size=10)
         self.pub_eul = rospy.Publisher(pub_eul_name, Euler, queue_size=10)    
         self.pub_pos = rospy.Publisher(pub_pos_name, Vector3, queue_size=10)        
-        self.pub_vel = rospy.Publisher(pub_vel_name, Vector3, queue_size=10)            
+        self.pub_vel_lin = rospy.Publisher(pub_vel_lin_name, Vector3, queue_size=10)   
+        self.pub_vel_ang = rospy.Publisher(pub_vel_ang_name, Vector3, queue_size=10) 
+        
         self.sub_sta = rospy.Subscriber(sub_sta_name, ModelStates, self.states_callback)             
         
     def states_callback(self, data):
@@ -50,7 +54,8 @@ class EKF:
         self.pub_att.publish(self.quad_pose.orientation)
         self.pub_eul.publish(self.quad_euler)
         self.pub_pos.publish(self.quad_pose.position)
-        self.pub_vel.publish(self.quad_twist.linear)
+        self.pub_vel_lin.publish(self.quad_twist.linear)
+        self.pub_vel_ang.publish(self.quad_twist.angular)
 
 if __name__ == '__main__':
     node_name = 'estimator'

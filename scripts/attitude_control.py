@@ -10,7 +10,8 @@ from geometry_msgs.msg import Quaternion, Vector3, Pose, Vector3Stamped, PoseSta
 from quad_ufabc.msg import\
     CartesianPointStamped, Pose, Velocity, Accel, Point,\
         Quaternion1, Num, Euler, PositionControllerOutputStamped,\
-            AttitudeControllerOutputStamped 
+            AttitudeControllerOutputStamped, \
+                AttitudeControllerErrorStamped
 
 class Attitude_Control(Controller):
     
@@ -30,20 +31,30 @@ class Attitude_Control(Controller):
     Salidas:
         - COLOCAR AQUI AS SAÍDAS
     """    
-    def __init__(self) -> None:
-        
+    def __init__(self):
+        super().__init__()
         # parâmeters
         self.orientation_atual = Quaternion1()
         self.pos_control_output = PositionControllerOutputStamped()
         self.attitude_error_quat = Quaternion1()
         self.att_control_output = AttitudeControllerOutputStamped()
+        self.att_control_error = AttitudeControllerErrorStamped()
+        self.vel_angular_atual = Vector3()
         
-        # Subscrições
+        # Subscrição tópico de atitude
         sub_att_name = '/quad/kf/attitude'
-        sub_pos_cont_out = '/quad/control/position_controller_output'
         self.sub_att = rospy.Subscriber(sub_att_name,\
             Quaternion,\
                 self.callback_attitude)
+        
+        # Subscrição tópico de velocidade angular
+        sub_vel_ang_name = '/quad/kf/vel_ang'
+        self.sub_vel_ang = rospy.Subscriber(sub_vel_ang_name,\
+            Vector3,\
+                self.callback_vel_ang)
+        
+        # Subscrição tópico 'saída do controlador de posição'
+        sub_pos_cont_out = '/quad/control/position_controller_output'
         self.pos_cont_out = rospy.Subscriber(sub_pos_cont_out,\
             PositionControllerOutputStamped,\
                 self.callback_pos_control_out)
@@ -52,7 +63,12 @@ class Attitude_Control(Controller):
         pub_att_cont_out = '/quad/control/attitude_controller_output'
         self.pub_att_control_output = rospy.Publisher(pub_att_cont_out,\
             AttitudeControllerOutputStamped,\
-                queue_size=10)        
+                queue_size=10)  
+        
+        pub_att_control_error = '/quad/control/attitude_controller_error'
+        self.pub_att_control_error = rospy.Publisher(pub_att_control_error,\
+            AttitudeControllerErrorStamped,\
+                queue_size=10)      
         
     def callback_attitude(self, data):
         # orientação atual
@@ -63,6 +79,9 @@ class Attitude_Control(Controller):
         self.orientation_atual.x = data.x
         self.orientation_atual.y = data.y
         self.orientation_atual.z = data.z
+    
+    def callback_vel_ang(self, data):
+        self.vel_angular_atual = data
         
     def callback_pos_control_out(self, data):
         self.pos_control_output = data
@@ -74,15 +93,28 @@ class Attitude_Control(Controller):
     def control(self):
         # chama o controle de attitude 
         # publica os três torques
-        self.att_control_quat(self,\
-            self.orientation_atual,\
-                self.attitude_error_quat,\
-                    ang_vel_atual)
+        tau, error = self.att_control_quat(
+            self.quat_to_np_array(self.orientation_atual),
+            self.quat_to_np_array(self.attitude_error_quat),
+            self.point_to_np_array(self.vel_angular_atual))
+        
+        self.att_control_output.torques.x = tau[0]
+        self.att_control_output.torques.y = tau[1]
+        self.att_control_output.torques.z = tau[2]
+        self.att_control_output.header.stamp = rospy.Time.now()
+        
         self.pub_att_control_output.publish(self.att_control_output)
-
-        return None
-    
-    
+        
+        self.att_control_error.attitude_error.x = error[0]
+        self.att_control_error.attitude_error.y = error[1]
+        self.att_control_error.attitude_error.z = error[2]
+        self.att_control_error.ang_vel_error.x = error[3]
+        self.att_control_error.ang_vel_error.y = error[4]
+        self.att_control_error.ang_vel_error.z = error[5]
+        self.att_control_error.header.stamp = rospy.Time.now()
+        
+        self.pub_att_control_error.publish(self.att_control_error)
+        
 if __name__ == '__main__':
     try:
         node_name = 'attitude_controller_2'

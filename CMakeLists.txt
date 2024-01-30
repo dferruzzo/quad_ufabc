@@ -63,14 +63,15 @@ find_package(catkin REQUIRED COMPONENTS
    PositionControllerOutput.msg
    PositionControllerOutputStamped.msg
    AttitudeControllerOutputStamped.msg
+   AttitudeControllerErrorStamped.msg
 #   Message2.msg
  )
 
 ## Generate services in the 'srv' folder
-add_service_files(
-  FILES
-  AddTwoInts.srv
-)
+#add_service_files(
+#  FILES
+# # AddTwoInts.srv
+#)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -172,8 +173,8 @@ include_directories(
 ## Mark executable scripts (Python etc.) for installation
 ## in contrast to setup.py, you can choose the destination
 catkin_install_python(PROGRAMS
-  scripts/add_two_ints_server.py
-  scripts/add_two_ints_client.py
+  #scripts/add_two_ints_server.py
+  #scripts/add_two_ints_client.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

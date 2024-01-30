@@ -2,24 +2,6 @@
 import rospy
 import roslaunch
 
-def start_control():
-
-    rospy.loginfo('Starting Quadrotor Control Node...')
-
-    package = 'quad_ufabc'
-    executable = 'control_node.py'
-    node_name = 'control_node'
-
-    node = roslaunch.core.Node(package=package, node_type=executable, name=node_name)
-    launch = roslaunch.scriptapi.ROSLaunch()
-    launch.start()
-    process = launch.launch(node)
-
-    if process.is_alive():
-        print('')
-        print('Control Initialized')
-        print('')
-
 def start_pos_vel_control():
 
     rospy.loginfo('Starting position and velocity Quadrotor Control Node...')
@@ -106,17 +88,34 @@ def start_recorder_node():
         print('')
         print('Starting Recorder node')
         print('')
+
+def start_quadrotor(): 
+    rospy.loginfo('Starting Quadrotor node...')
+    
+    package = 'quad_ufabc'
+    executable = 'quadrotor_node.py'
+    node_name = 'quadrotor_node'
+    
+    node = roslaunch.core.Node(package=package, node_type=executable, name=node_name)
+    launch = roslaunch.scriptapi.ROSLaunch()
+    launch.start()
+    process = launch.launch(node)
+
+    if process.is_alive():
+        print('')
+        print('Starting Quadrotor node')
+        print('')
         
 def main():
     # 
     rospy.init_node('Main')
-    start_recorder_node()       # novo
-    start_estimator()   
     rospy.sleep(1)
-    start_control()
-    start_pos_vel_control()     # novo
-    start_attitude_control()   # novo
-    start_desired_traj()        # novo
+    start_recorder_node()       
+    start_quadrotor()
+    start_estimator()   
+    start_pos_vel_control()     
+    start_attitude_control()    
+    start_desired_traj()        
     rospy.spin()
 
 if __name__ == "__main__":

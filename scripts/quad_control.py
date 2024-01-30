@@ -251,6 +251,7 @@ class Controller:
         #Desired attitude states
         x_att_des = np.zeros((6,1))
         x_att_des[0:3] = theta_des
+        # derivative of theta_des
         x_att_des[3:6] = (theta_des - self.theta_des_ant)/0.01
 
         #Attitude states error
@@ -689,3 +690,9 @@ class Controller:
                     a_list.append(a)
         
         return x_list, v_list, a_list
+    
+    def point_to_np_array(self, point):
+        return np.array([[point.x, point.y, point.z]]).T
+    
+    def quat_to_np_array(self, quat):
+        return np.array([[quat.w, quat.x, quat.y, quat.z]]).T
