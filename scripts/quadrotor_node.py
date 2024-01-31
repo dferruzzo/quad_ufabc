@@ -22,6 +22,7 @@ class Quadrotor(quad_robot):
         self.sub_att_cont_out = rospy.Subscriber(sub_att_cont_out_name,
                                                  AttitudeControllerOutputStamped,
                                                  self.callback_att_control_output)
+        # publica as velocidades angulares dos motores
             
     def callback_pos_control_output(self, data):
         self.control_output[0] = data.position_controller_output.thrust.num
@@ -39,7 +40,7 @@ class Quadrotor(quad_robot):
                                   self.control_output[2], 
                                   self.control_output[3]]) 
         # Send the command to quadrotor
-        self.quad_ufabc.step(w/10)   
+        self.quad_ufabc.step(w)   
 
 if __name__ == '__main__':
     try:       

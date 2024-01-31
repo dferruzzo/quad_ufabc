@@ -1,5 +1,9 @@
-!#/bin/bash/
+#!/bin/bash -i
 # run this file at start up
-cd ../..
+# bash startup.sh
+# neet to restart the terminal after running this file.
+source /opt/ros/noetic/setup.bash
+cd /home/catkin_ws
 catkin_make
-source devel/setup.bash
+echo "source /home/catkin_ws/devel/setup.bash" >> ~/.bashrc
+source ~/.bashrc

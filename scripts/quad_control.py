@@ -46,46 +46,49 @@ class Controller:
             
             Numa futura versão essa função pode ser um control allocator.       
         """""
-        x = np.array([[self.KT, self.KT, self.KT, self.KT],
+        T = np.array([[self.KT, self.KT, self.KT, self.KT],
                       [-self.L*self.KT, 0, self.L*self.KT, 0],
                       [0, -self.L*self.KT, 0, self.L*self.KT],
                       [self.KD, -self.KD, self.KD, -self.KD]])
         
-        y = np.array([f, float(m[0]), float(m[1]), float(m[2])]).T
+        u = np.array([f, float(m[0]), float(m[1]), float(m[2])]).T
         
         """
-         'x' é a matriz de transformação, cuja inversa quando multiplicada pelo 'y' dos torques e do empuxo total produz o vetor 'u' dos quadrados das velocidades angulares 'w'.
-         
-         u = x^(-1)*y         
-         
+         'T' é a matriz de transformação, tal que 
+         u = T*w
+         w é o vetor dos quadrados das velocidades angulares,
+         w = [w1**2, w2**2, w3**2, w4**2]
+
+         w = T^(-1)*u         
         """
+
+        w = np.linalg.solve(T, u) # T*w = u 
         
-        """
-        u  é o vetor do quadrado das velocidades angulares dos motores
-        """
-        u = np.linalg.solve(x, y) # x*u = y 
-        
-        w_1 = np.sqrt(np.abs(u[0]))*(-1)    # sentido do giro
-        w_2 = np.sqrt(np.abs(u[1]))
-        w_3 = np.sqrt(np.abs(u[2]))*(-1)    # sentido do giro    
-        w_4 = np.sqrt(np.abs(u[3]))
+        w_1 = np.sqrt(np.abs(w[0]))*(-1)*2*np.pi/60 # rad/seg to RPM e sentido do giro
+        w_2 = np.sqrt(np.abs(w[1]))*2*np.pi/60      # rad/seg to RPM
+        w_3 = np.sqrt(np.abs(w[2]))*(-1)*2*np.pi/60 # rad/seg to RPM e sentido do giro    
+        w_4 = np.sqrt(np.abs(w[3]))*2*np.pi/60      # rad/seg to RPM
             
         """
         w é o vetor das velocidades angulares dos motores
         """
         
-        w = np.array([[w_1,w_2,w_3,w_4]]).T
+        W = np.array([[w_1,w_2,w_3,w_4]]).T
                 
         """
-        Não está sendo utilizado clipping. Isto é, não está sendo verificado o máximo esforço requerido.
-        """
+        Não está sendo utilizado clipping. 
+        Isto é, não está sendo verificado o máximo esforço requerido.
+        
         FM_new = np.dot(x, u)   # Nao está sendo utilizado        
         F_new = FM_new[0]       # Nao está sendo utilizado
         M_new = FM_new[1:4]     # Nao está sendo utilizado
         
         # step_effort = (u*K_F/(T2WR*M*G/4)*2)-1
         
-        return w, F_new, M_new
+        """
+        F_new = 0
+        M_new = 0
+        return W, F_new, M_new
         
     ############################### PID CONTROL APPROACH USING EULER ANGLES PARAMETRIZATION #########################
 
