@@ -159,10 +159,10 @@ class Controller:
         #PD gains Real States
         Kp = np.array([[2, 0 ,0],
                        [0, 2, 0],
-                       [0, 0, 8]])*8
+                       [0, 0, 8]])*1.0
         Kd = np.array([[1, 0, 0],
                        [0, 1, 0],
-                       [0, 0, 3]])*2.5
+                       [0, 0, 3]])*1.0
 
         # Kp = np.array([[2, 0 ,0],
         #                [0, 2, 0],
@@ -283,63 +283,7 @@ class Controller:
 
         return tau, error    
 
-    def pos_control_quat(self, pos_atual, pos_des, vel_atual, vel_des, accel_des):
-        
-        """
-        Function that computes the desired thrust and quaternion for quadrotor based on desired trajectory.
-        """
-
-        # Compute position and velocity error
-        error_pos = pos_atual - pos_des
-        error_vel = vel_atual - vel_des
-
-        """
-        # ESSA PARTE DO CÓDIGO NÃO FUNCIONA
-        # aceleração desejada normalizada |accel_des| = 1
-        n = accel_des/np.linalg.norm(accel_des)
-        # velocidade desejada normalizada |vel_des| = 1
-        t = vel_des/np.linalg.norm(vel_des)
-        # produto vetorial dos vetores t e n
-        b = np.cross(t, n, axis=0)
-       
-        if np.isnan(b).any:
-            error_pos = error_pos            
-        else:
-            error_pos = (error_pos.T@n)@n + (error_pos.T@b)@b
-        """
-        
-        #Gains for real states
-        #Proportional gain
-        # Kp = np.diag([5, 5, 25])*3
-        # # #Derivative gain
-        # Kd = np.diag([2, 2, 10])*0.5
-
-        #Gains for Estimated States
-        #Proportional gain
-        Kp = np.diag([4, 4, 20])*2.3
-        # #Derivative gain
-        Kd = np.diag([3.5, 3.5, 7])*1.3
-
-        #Control force in inertial frame
-        Fu = -Kp@error_pos - Kd@error_vel - 1.05*np.array([[0, 0, -9.8]]).T
-
-        #Desired quaternion
-        z = np.array([[0, 0, 1]]).T
-        Fu_norm = np.linalg.norm(Fu)
-        q = np.zeros((4,1))
-        q[0] = (np.vdot(z, Fu) + Fu_norm)
-        q[1:4] =  np.cross(z, Fu, axis=0)
-        q_norm = np.linalg.norm(q)
-        q_des = q/q_norm
-
-        # print(q_des)
-
-        #Desired thrust
-        T = Fu_norm*z
-        # print(T)
-        return Fu_norm, q_des
-    
-    def pos_control_quat_v1(self, pos_atual, pos_des, vel_atual, vel_des, q_des):
+    def pos_control_quat(self, pos_atual, pos_des, vel_atual, vel_des, q_des):
         
         """
         Function that computes the desired thrust and quaternion for quadrotor

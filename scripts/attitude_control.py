@@ -114,11 +114,10 @@ class Attitude_Control(Controller):
                          velocidade_angular_atual) -> (tau, error)
         """
 
-        #tau, error = self.att_control_quat(
-        #    self.quat_to_np_array(self.orientation_atual),
-        #    self.quat_to_np_array(self.attitude_error_quat),
-        #    self.point_to_np_array(self.vel_angular_atual))
-        
+        tau, error = self.att_control_quat(
+            self.quat_to_np_array(self.orientation_atual),
+            self.quat_to_np_array(self.attitude_error_quat),
+            self.point_to_np_array(self.vel_angular_atual))
         
         """
         Controle de atitude PD baseado em ângulos de Euler:
@@ -126,13 +125,12 @@ class Attitude_Control(Controller):
                        ângulos_de Euler_atual, 
                        velocidade_angular_atual, 
                        ângulos_de_Euler_desejados) -> (tau, error)
-        """
         
         tau, error = self.att_control_PD(
                 self.euler_to_np_array(self.orientation_atual_euler),
                 self.point_to_np_array(self.vel_angular_atual),
                 self.euler_to_np_array(self.attitude_error_euler))
-
+        """
         self.att_control_output.torques.x = tau[0]
         self.att_control_output.torques.y = tau[1]
         self.att_control_output.torques.z = tau[2]

@@ -73,7 +73,8 @@ def Euler2Quat(euler):
 
     q3 = cos_ph*cos_th*sin_ps - sin_ph*sin_th*cos_ps
 
-    q = np.array([[q0, q1, q2, q3]]).T
+    #q = np.array([[q0, q1, q2, q3]]).T
+    q = np.array([q0, q1, q2, q3])
 
     return q
 

@@ -3,7 +3,7 @@
 import rospy
 import numpy as np
 #from quad_ros import quad_robot
-from quat_utils import QuatProd, Quat2Euler
+from quat_utils import QuatProd, Quat2Euler, Euler2Quat
 from quad_control import Controller
 #from std_msgs.msg import Bool, Float32
 from geometry_msgs.msg import Quaternion, Vector3, Pose, Vector3Stamped, PoseStamped
@@ -51,8 +51,9 @@ class Pos_Vel_Control(Controller):
         self.orien_atual_euler = Euler()        # orientação em Euler        
         self.pos_des = Point()                  # posição desejada
         self.vel_des = Point()                  # velocidade desejada
+        self.acel_des = Point()                 # aceleração desejada
         self.orientation_des = Quaternion1()    # orientação desejada            
-        #self.controller = Controller()          # Instancia o controlador 
+        self.euler_orientation_des = Euler()    # orientação desejada            
         self.pos_control_output = PositionControllerOutputStamped()
         self.desired_trajectory = CartesianPointStamped()   # valores de trajetória desejados
         
@@ -99,7 +100,9 @@ class Pos_Vel_Control(Controller):
     def callback_trajectory(self, data):
         self.pos_des = data.cartesian_point.pose.position
         self.vel_des = data.cartesian_point.velocity.linear
+        self.acel_des = data.cartesian_point.acceleration.linear
         self.orientation_des = data.cartesian_point.pose.orientation
+        self.euler_orientation_des = data.cartesian_point.pose.euler_orientation
         #
         self.control()      
     
@@ -108,14 +111,48 @@ class Pos_Vel_Control(Controller):
         # T é o empuxo total
         # q_pdes é o quaternio de atitude desejado correspondente
         #    
-        T, q_erro = self.pos_control_quat_v1(
+        '''
+        Controle de posição e velocidade baseado em quaternions
+        pos_control_quat(
+                        posição_atual,
+                        posição_desejada,
+                        velocidade_atual,
+                        velocidade_desejada) -> (Empuxo total, atitude_desejado_quat)
+
+        T, q_erro = self.pos_control_quat(
             self.point_to_np_array(self.pos_atual),
             self.point_to_np_array(self.pos_des),
             self.point_to_np_array(self.vel_atual),
             self.point_to_np_array(self.vel_des),
             self.quat_to_np_array(self.orientation_des))
-        #
+        
         euler_out = Quat2Euler(q_erro)
+        '''
+
+        '''
+        Controle de posição e velocidade  PD
+        pos_control_PD(
+                       posição_atual,
+                       posição desejada,
+                       velocidade_atual,
+                       velocidade_desejada,
+                       aceleração_desejada,
+                       psi) -> (Empuxo_total, phi_desejado, theta_desejado)
+        '''
+        
+        T, phi_des, theta_des = self.pos_control_PD(
+                self.point_to_np_array(self.pos_atual),
+                self.point_to_np_array(self.pos_des),
+                self.point_to_np_array(self.vel_atual),
+                self.point_to_np_array(self.vel_des),
+                self.point_to_np_array(self.acel_des),
+                np.double(self.euler_orientation_des.psi))
+        euler_out = np.array([
+            phi_des[0],
+            theta_des[0], 
+            np.double(self.euler_orientation_des.psi)])  
+        q_erro = Euler2Quat(euler_out)
+        #
         self.orien_atual_euler.phi = euler_out[0]
         self.orien_atual_euler.theta = euler_out[1]
         self.orien_atual_euler.psi = euler_out[2]       
