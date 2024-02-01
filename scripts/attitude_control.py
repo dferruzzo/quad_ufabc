@@ -35,8 +35,10 @@ class Attitude_Control(Controller):
         super().__init__()
         # parâmeters
         self.orientation_atual = Quaternion1()
+        self.orientation_atual_euler = Euler()
         self.pos_control_output = PositionControllerOutputStamped()
         self.attitude_error_quat = Quaternion1()
+        self.attitude_error_euler = Euler()
         self.att_control_output = AttitudeControllerOutputStamped()
         self.att_control_error = AttitudeControllerErrorStamped()
         self.vel_angular_atual = Vector3()
@@ -46,6 +48,11 @@ class Attitude_Control(Controller):
         self.sub_att = rospy.Subscriber(sub_att_name,\
             Quaternion,\
                 self.callback_attitude)
+        
+        sub_att_name = '/quad/kf/euler'
+        self.sub_att = rospy.Subscriber(sub_att_name,\
+            Euler,\
+                self.callback_attitude_euler)
         
         # Subscrição tópico de velocidade angular
         sub_vel_ang_name = '/quad/kf/vel_ang'
@@ -79,6 +86,10 @@ class Attitude_Control(Controller):
         self.orientation_atual.x = data.x
         self.orientation_atual.y = data.y
         self.orientation_atual.z = data.z
+   
+    def callback_attitude_euler(self, data):
+        # orientação atual em ângulos de Euler
+        self.orientation_atual_euler = data
     
     def callback_vel_ang(self, data):
         self.vel_angular_atual = data
@@ -88,16 +99,40 @@ class Attitude_Control(Controller):
         # O erro de atitude em quaternions obtido do controle de posição e velocidade.
         self.attitude_error_quat =\
             self.pos_control_output.position_controller_output.orientation_set_point
+        self.attitude_error_euler =\
+                self.pos_control_output.position_controller_output.euler_set_point
         self.control()
     
     def control(self):
         # chama o controle de attitude 
         # publica os três torques
-        tau, error = self.att_control_quat(
-            self.quat_to_np_array(self.orientation_atual),
-            self.quat_to_np_array(self.attitude_error_quat),
-            self.point_to_np_array(self.vel_angular_atual))
+        """
+        Controle de atitude em quaternions:
+        att_control_quat(
+                         quaternion_atual,
+                         quaternion_desejado,
+                         velocidade_angular_atual) -> (tau, error)
+        """
+
+        #tau, error = self.att_control_quat(
+        #    self.quat_to_np_array(self.orientation_atual),
+        #    self.quat_to_np_array(self.attitude_error_quat),
+        #    self.point_to_np_array(self.vel_angular_atual))
         
+        
+        """
+        Controle de atitude PD baseado em ângulos de Euler:
+        att_control_PD(
+                       ângulos_de Euler_atual, 
+                       velocidade_angular_atual, 
+                       ângulos_de_Euler_desejados) -> (tau, error)
+        """
+        
+        tau, error = self.att_control_PD(
+                self.euler_to_np_array(self.orientation_atual_euler),
+                self.point_to_np_array(self.vel_angular_atual),
+                self.euler_to_np_array(self.attitude_error_euler))
+
         self.att_control_output.torques.x = tau[0]
         self.att_control_output.torques.y = tau[1]
         self.att_control_output.torques.z = tau[2]

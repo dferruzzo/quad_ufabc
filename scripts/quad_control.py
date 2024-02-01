@@ -134,16 +134,9 @@ class Controller:
 
         ang_vel_error = ang_vel_des - ang_vel_atual
 
-        #Compute Optimal Control Law
-
-        #print(angle_error.T)
-        # print(ang_vel_error.T)
-
         T = np.array([[1/self.Ixx, np.sin(phi)*np.tan(theta)/self.Iyy, np.cos(phi)*np.tan(theta)/self.Izz],
                       [0, np.cos(phi)/self.Iyy, -np.sin(phi)/self.Izz],
                       [0, np.sin(phi)/np.cos(theta)/self.Iyy, np.cos(phi)/np.cos(theta)/self.Izz]])
-
-        # print(Kp@angle_error)
 
         u = np.linalg.inv(T)@(Kp@angle_error + Kd@ang_vel_error)
         # u = (Kp@angle_error + Kd@ang_vel_error)
@@ -155,8 +148,12 @@ class Controller:
 
         self.ang_ant_des = ang_des
 
-        return tau_x, tau_y, tau_z
-    
+        tau = np.array([tau_x, tau_y, tau_z])
+        
+        error = np.array([angle_error, ang_vel_error]).reshape((6,1))
+        
+        return tau, error
+
     def pos_control_PD(self, pos_atual, pos_des, vel_atual, vel_des, accel_des, psi):
 
         #PD gains Real States
@@ -696,6 +693,9 @@ class Controller:
     
     def point_to_np_array(self, point):
         return np.array([[point.x, point.y, point.z]]).T
+    
+    def euler_to_np_array(self, euler):
+        return np.array([[euler.phi, euler.theta, euler.psi]]).T
     
     def quat_to_np_array(self, quat):
         return np.array([[quat.w, quat.x, quat.y, quat.z]]).T

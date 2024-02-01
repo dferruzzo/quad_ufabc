@@ -54,10 +54,13 @@ actual_vel_df = pd.read_csv(actual_vel)
 # gráfico das Velocidades
 fig2 = plt.figure()
 plt.subplot(3,1,1)
+#plt.rcParams['text.usetex'] = True
 plt.title('Velocidades XYZ')
-plt.plot(des_traj_df['Time'].to_numpy(), des_traj_df['cartesian_point.velocity.linear.x'].to_numpy())
-plt.plot(actual_vel_df['Time'].to_numpy(), actual_vel_df['x'].to_numpy())
-plt.legend(['$v_x$(t) desejado','$v_x$(t) FK'])
+plt.plot(des_traj_df['Time'].to_numpy(), des_traj_df['cartesian_point.velocity.linear.x'].to_numpy(), label='\\(v_x(t) desejado\\)')
+plt.plot(actual_vel_df['Time'].to_numpy(), actual_vel_df['x'].to_numpy(),\
+        label= '\\(v_x(t) FK\\)')
+#plt.legend([r'$v_x(t) desejado$', r'$v_x(t) FK$'])
+plt.legend()
 frame1 = plt.gca()
 frame1.axes.xaxis.set_ticklabels([])
 #frame1.axes.get_xaxis().set_ticks([])
@@ -241,8 +244,43 @@ plt.plot(pos_control_output_df['Time'].to_numpy(),\
 #plt.grid()
 plt.legend(['$\psi$'])
 #
-plt.show()
+#plt.show()
 
+# saída do controle de atitude
+att_control_output = b.message_by_topic(topic='/quad/control/attitude_controller_output')
+att_control_output_df = pd.read_csv(att_control_output)
+#print(att_control_output_df)
+
+fig7 = plt.figure()
+plt.subplot(4,1,1)
+plt.title('Saídas do controle')
+plt.plot(pos_control_output_df['Time'].to_numpy(), pos_control_output_df['position_controller_output.thrust.num'].to_numpy())
+#plt.grid()
+plt.legend(['Empuxo total'])
+frame1 = plt.gca()
+frame1.axes.xaxis.set_ticklabels([])
+#
+plt.subplot(4,1,2)
+plt.plot(att_control_output_df['Time'].to_numpy(), att_control_output_df['torques.x'].to_numpy())
+#plt.grid()
+plt.legend(['torque \phi'])
+frame2 = plt.gca()
+frame2.axes.xaxis.set_ticklabels([])
+#
+plt.subplot(4,1,3)
+plt.plot(att_control_output_df['Time'].to_numpy(), att_control_output_df['torques.y'].to_numpy())
+#plt.grid()
+plt.legend(['torque \\theta'])
+frame3 = plt.gca()
+frame3.axes.xaxis.set_ticklabels([])
+#
+plt.subplot(4,1,4)
+plt.plot(att_control_output_df['Time'].to_numpy(), att_control_output_df['torques.z'].to_numpy())
+#plt.grid()
+plt.legend(['torque \psi'])
+frame4 = plt.gca()
+frame4.axes.xaxis.set_ticklabels([])
+#
 # create html for both graphs 
 html1 = mpld3.fig_to_html(fig1)
 html2 = mpld3.fig_to_html(fig2)
@@ -250,5 +288,7 @@ html3 = mpld3.fig_to_html(fig3)
 html4 = mpld3.fig_to_html(fig4)
 html5 = mpld3.fig_to_html(fig5)
 html6 = mpld3.fig_to_html(fig6)
+html7 = mpld3.fig_to_html(fig7)
+
 # serve joined html to browser
-serve(html1+html2+html3+html4+html5+html6)
+serve(html1+html2+html3+html4+html5+html6+html7)
