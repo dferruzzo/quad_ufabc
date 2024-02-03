@@ -121,6 +121,12 @@ class Attitude_Control(Controller):
                 self.point_to_np_array(self.vel_angular_atual),
                 self.euler_to_np_array(self.attitude_error_euler),
                 self.freq)
+        elif self.controller == 'LQR':
+            tau, error = self.att_control_LQR(
+                self.euler_to_np_array(self.orientation_atual_euler),
+                self.euler_to_np_array(self.attitude_error_euler),
+                self.point_to_np_array(self.vel_angular_atual),
+                self.freq)
         else:
             tau, error = self.att_control_PD(
                 self.euler_to_np_array(self.orientation_atual_euler),
@@ -151,7 +157,7 @@ if __name__ == '__main__':
         rospy.init_node(node_name)
         freq = 100              # update frequency
         rate = rospy.Rate(freq) # 100Hz
-        Attitude_Control(freq, controller='Quat')        
+        Attitude_Control(freq, controller='LQR')        
         rate.sleep()
         rospy.spin()
     except rospy.ROSInterruptException:

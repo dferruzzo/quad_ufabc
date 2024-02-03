@@ -2,7 +2,7 @@ import numpy as np
 from quat_utils import QuatProd, Quat2Euler, Euler2Quat
 #from numpy.core.numeric import NaN
 #from quat_utils import DerivQuat
-#from scipy.linalg import solve_continuous_are as solve_lqr
+from scipy.linalg import solve_continuous_are as solve_lqr, inv
 
 
 class Controller:
@@ -92,69 +92,6 @@ class Controller:
         
     ############################### PID CONTROL APPROACH USING EULER ANGLES PARAMETRIZATION #########################
 
-    def att_control_PD(self, ang_atual, ang_vel_atual, ang_des, freq):
-        
-        phi = float(ang_atual[0])
-        theta = float(ang_atual[1])
-        psi = float(ang_atual[2])
-
-        #PID gains Real States
-        Kp = np.array([[30, 0 ,0],
-                       [0, 30, 0],
-                       [0, 0, 1.4]])*3.5
-        Kd = np.array([[8, 0, 0],
-                       [0, 8, 0],
-                       [0, 0, 1]])*0.8
-
-        #PD gains Estimated States
-        # Kp = np.array([[200, 0 ,0],
-        #                [0, 200, 0],
-        #                [0, 0, 120]])*1.5
-        # Kd = np.array([[50, 0, 0],
-        #                [0, 50, 0],
-        #                [0, 0, 45]])*1
-
-        # Kp = np.array([[20, 0 ,0],
-        #                [0, 20, 0],
-        #                [0, 0, 5]])*0.6
-        # Kd = np.array([[12, 0, 0],
-        #                [0, 12, 0],
-        #                [0, 0, 1]])*1
-
-        # Kp = np.array([[250, 0 ,0],
-        #                [0, 250, 0],
-        #                [0, 0, 10]])*5.4
-        # Kd = np.array([[40, 0, 0],
-        #                [0, 40, 0],
-        #                [0, 0, 35]])*1.3
-        
-        angle_error = ang_des - ang_atual
-        #ang_vel_des = (ang_des - self.ang_ant_des)/0.01
-        # TODO Implementar filtro PB para essa derivada.
-        ang_vel_des = (ang_des - self.ang_ant_des)*freq
-
-        ang_vel_error = ang_vel_des - ang_vel_atual
-
-        T = np.array([[1/self.Ixx, np.sin(phi)*np.tan(theta)/self.Iyy, np.cos(phi)*np.tan(theta)/self.Izz],
-                      [0, np.cos(phi)/self.Iyy, -np.sin(phi)/self.Izz],
-                      [0, np.sin(phi)/np.cos(theta)/self.Iyy, np.cos(phi)/np.cos(theta)/self.Izz]])
-
-        u = np.linalg.inv(T)@(Kp@angle_error + Kd@ang_vel_error)
-        # u = (Kp@angle_error + Kd@ang_vel_error)
-
-        #Optimal input
-        tau_x = float(u[0])
-        tau_y = float(u[1])
-        tau_z = float(u[2])
-
-        self.ang_ant_des = ang_des
-
-        tau = np.array([tau_x, tau_y, tau_z])
-        
-        error = np.array([angle_error, ang_vel_error]).reshape((6,1))
-        
-        return tau, error
-
     def pos_control_PD(self, pos_atual, pos_des, vel_atual, vel_des, accel_des, psi):
 
         #PD gains Real States
@@ -211,29 +148,104 @@ class Controller:
         
         return T, q_erro, euler_out
 
+    def pos_control_Quat(self, pos_atual, pos_des, vel_atual, vel_des, q_des):
+        
+        """
+        Function that computes the desired thrust and quaternion for quadrotor
+        based on desired trajectory.
+        """
+
+        # Compute position and velocity error
+        error_pos = pos_atual - pos_des
+        error_vel = vel_atual - vel_des
+
+        #Gains for Estimated States
+        #Proportional gain
+        Kp = np.diag([4, 4, 20])*2.3
+        # #Derivative gain
+        Kd = np.diag([3.5, 3.5, 7])*1.3
+
+        #Control force in inertial frame
+        Fu = -Kp@error_pos - Kd@error_vel - 1.05*np.array([[0, 0, -9.8]]).T
+
+        #Desired quaternion
+        z = np.array([[0, 0, 1]]).T
+        Fu_norm = np.linalg.norm(Fu)
+        q = np.zeros((4,1))
+        q[0] = (np.vdot(z, Fu) + Fu_norm)
+        q[1:4] =  np.cross(z, Fu, axis=0)
+        q_norm = np.linalg.norm(q)
+        q_p = q/q_norm
+        q_erro = QuatProd(q_p, q_des)        
+        euler_out = Quat2Euler(q_erro)
+        return Fu_norm, q_erro, euler_out
 
     ####################### PID CONTROL APPROACH USING QUATERNION PARAMETRIZATION ###############################################
     
-    def log_mapping(self, q):
-
-        """
-        Function that compute the quaternion's log mapping
-        """
-
-        # Quaternion's scalar part
-        q_s = q[0,0]
-        #Quaternion's vector part
-        q_vec = q[1:4]
-        #Quaternion vector norm
-        q_vec_norm = np.linalg.norm(q_vec)
-
-        #Logarithimic mapping for unit quaternion
-        if q_vec_norm != 0:
-            ln_q = (q_vec/q_vec_norm)*np.arccos(q_s)
-        else:
-            ln_q = np.zeros((3,1))
+    def att_control_PD(self, ang_atual, ang_vel_atual, ang_des, freq):
         
-        return ln_q
+        phi = float(ang_atual[0])
+        theta = float(ang_atual[1])
+        psi = float(ang_atual[2])
+
+        #PID gains Real States
+        Kp = np.array([[30, 0 ,0],
+                       [0, 30, 0],
+                       [0, 0, 1.4]])*3.5
+        Kd = np.array([[8, 0, 0],
+                       [0, 8, 0],
+                       [0, 0, 1]])*0.8
+
+        #PD gains Estimated States
+        # Kp = np.array([[200, 0 ,0],
+        #                [0, 200, 0],
+        #                [0, 0, 120]])*1.5
+        # Kd = np.array([[50, 0, 0],
+        #                [0, 50, 0],
+        #                [0, 0, 45]])*1
+
+        # Kp = np.array([[20, 0 ,0],
+        #                [0, 20, 0],
+        #                [0, 0, 5]])*0.6
+        # Kd = np.array([[12, 0, 0],
+        #                [0, 12, 0],
+        #                [0, 0, 1]])*1
+
+        # Kp = np.array([[250, 0 ,0],
+        #                [0, 250, 0],
+        #                [0, 0, 10]])*5.4
+        # Kd = np.array([[40, 0, 0],
+        #                [0, 40, 0],
+        #                [0, 0, 35]])*1.3
+        
+        angle_error = ang_des - ang_atual
+        #ang_vel_des = (ang_des - self.ang_ant_des)/0.01
+        #
+        # TODO Implementar filtro PB para essa derivada.
+        #
+        ang_vel_des = (ang_des - self.ang_ant_des)*freq
+
+        ang_vel_error = ang_vel_des - ang_vel_atual
+
+        T = np.array([[1/self.Ixx, np.sin(phi)*np.tan(theta)/self.Iyy, np.cos(phi)*np.tan(theta)/self.Izz],
+                      [0, np.cos(phi)/self.Iyy, -np.sin(phi)/self.Izz],
+                      [0, np.sin(phi)/np.cos(theta)/self.Iyy, np.cos(phi)/np.cos(theta)/self.Izz]])
+
+        u = np.linalg.inv(T)@(Kp@angle_error + Kd@ang_vel_error)
+        # u = (Kp@angle_error + Kd@ang_vel_error)
+
+        #Optimal input
+        tau_x = float(u[0])
+        tau_y = float(u[1])
+        tau_z = float(u[2])
+
+        self.ang_ant_des = ang_des
+
+        tau = np.array([tau_x, tau_y, tau_z])
+        
+        error = np.array([angle_error, ang_vel_error]).reshape((6,1))
+        
+        return tau, error
 
     def att_control_Quat(self, q_atual, q_des, ang_vel_atual):
         
@@ -290,39 +302,67 @@ class Controller:
 
         return tau, error    
 
-    def pos_control_Quat(self, pos_atual, pos_des, vel_atual, vel_des, q_des):
+    def att_control_LQR(self, euler_atual, euler_desejado, ang_vel_atual, freq):
+        '''
+        Function that computes the desired torques for quadrotor based on
+        desired Euler angles and angular velocities.
+        The vector state is x = [phi, theta, psi, p, q, r]
+        '''
+        x = np.array([[euler_atual[0],
+                       euler_atual[1],
+                       euler_atual[2],
+                       ang_vel_atual[0],
+                       ang_vel_atual[1],
+                       ang_vel_atual[2]]]).T
+
+        vel_ang_desejada = (euler_desejado - self.ang_ant_des)*freq
         
-        """
-        Function that computes the desired thrust and quaternion for quadrotor
-        based on desired trajectory.
-        """
-
-        # Compute position and velocity error
-        error_pos = pos_atual - pos_des
-        error_vel = vel_atual - vel_des
-
-        #Gains for Estimated States
-        #Proportional gain
-        Kp = np.diag([4, 4, 20])*2.3
-        # #Derivative gain
-        Kd = np.diag([3.5, 3.5, 7])*1.3
-
-        #Control force in inertial frame
-        Fu = -Kp@error_pos - Kd@error_vel - 1.05*np.array([[0, 0, -9.8]]).T
-
-        #Desired quaternion
-        z = np.array([[0, 0, 1]]).T
-        Fu_norm = np.linalg.norm(Fu)
-        q = np.zeros((4,1))
-        q[0] = (np.vdot(z, Fu) + Fu_norm)
-        q[1:4] =  np.cross(z, Fu, axis=0)
-        q_norm = np.linalg.norm(q)
-        q_p = q/q_norm
-        q_erro = QuatProd(q_p, q_des)        
-        euler_out = Quat2Euler(q_erro)
-        return Fu_norm, q_erro, euler_out
-
+        x_des = np.array([[euler_desejado[0],
+                           euler_desejado[1],
+                           euler_desejado[2],
+                           vel_ang_desejada[0],
+                           vel_ang_desejada[1],
+                           vel_ang_desejada[2]]]).T
+        error = np.array([x- x_des]).reshape((6,1))
+        # 
+        A = np.zeros((6,6))
+        A[0,3] = 1
+        A[1,4] = 1
+        A[2,5] = 1
+        B = np.zeros((6,3))
+        B[3,0] = 1/self.Ixx
+        B[4,1] = 1/self.Iyy
+        B[5,2] = 1/self.Izz
+        Q = np.diag([1, 1, 1, 1, 1, 1])*50.0
+        R = np.diag([1, 1, 1])*50.0
+        P = solve_lqr(A, B, Q, R)
+        K = inv(R)@B.T@P
+        u = -K@error
+        self.ang_ant_des = euler_desejado
+        return np.array(u).reshape((3,1)), np.array(error).reshape((6,1))
+    
     #################################### TRAJECTORY PLANNER FUNCTIONS ######################################################
+    
+    def log_mapping(self, q):
+
+        """
+        Function that compute the quaternion's log mapping
+        """
+
+        # Quaternion's scalar part
+        q_s = q[0,0]
+        #Quaternion's vector part
+        q_vec = q[1:4]
+        #Quaternion vector norm
+        q_vec_norm = np.linalg.norm(q_vec)
+
+        #Logarithimic mapping for unit quaternion
+        if q_vec_norm != 0:
+            ln_q = (q_vec/q_vec_norm)*np.arccos(q_s)
+        else:
+            ln_q = np.zeros((3,1))
+        
+        return ln_q
     
     #Returns the derivatives
     def polyT(self, n, k, t):

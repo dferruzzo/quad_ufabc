@@ -156,7 +156,7 @@ if __name__ == '__main__':
     try:
         node_name = 'pos_vel_controller_2'
         rospy.init_node(node_name)
-        Pos_Vel_Control(controller="Quat")        
+        Pos_Vel_Control(controller="PD")        
         rate = rospy.Rate(50) # 50hz
         rate.sleep()
         rospy.spin()
