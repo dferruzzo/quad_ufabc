@@ -118,16 +118,14 @@ class Pos_Vel_Control(Controller):
                         posição_desejada,
                         velocidade_atual,
                         velocidade_desejada) -> (Empuxo total, atitude_desejado_quat)
-
+        '''
         T, q_erro = self.pos_control_quat(
             self.point_to_np_array(self.pos_atual),
             self.point_to_np_array(self.pos_des),
             self.point_to_np_array(self.vel_atual),
             self.point_to_np_array(self.vel_des),
             self.quat_to_np_array(self.orientation_des))
-        
         euler_out = Quat2Euler(q_erro)
-        '''
 
         '''
         Controle de posição e velocidade  PD
@@ -140,19 +138,19 @@ class Pos_Vel_Control(Controller):
                        psi) -> (Empuxo_total, phi_desejado, theta_desejado)
         '''
         
-        T, phi_des, theta_des = self.pos_control_PD(
-                self.point_to_np_array(self.pos_atual),
-                self.point_to_np_array(self.pos_des),
-                self.point_to_np_array(self.vel_atual),
-                self.point_to_np_array(self.vel_des),
-                self.point_to_np_array(self.acel_des),
-                np.double(self.euler_orientation_des.psi))
-        euler_out = np.array([
-            phi_des[0],
-            theta_des[0], 
-            np.double(self.euler_orientation_des.psi)])  
-        q_erro = Euler2Quat(euler_out)
-        #
+        #T, phi_des, theta_des = self.pos_control_PD(
+        #        self.point_to_np_array(self.pos_atual),
+        #        self.point_to_np_array(self.pos_des),
+        #        self.point_to_np_array(self.vel_atual),
+        #        self.point_to_np_array(self.vel_des),
+        #        self.point_to_np_array(self.acel_des),
+        #        np.double(self.euler_orientation_des.psi))
+        #euler_out = np.array([
+        #    phi_des[0],
+        #    theta_des[0], 
+        #    np.double(self.euler_orientation_des.psi)])  
+        #q_erro = Euler2Quat(euler_out)
+        
         self.orien_atual_euler.phi = euler_out[0]
         self.orien_atual_euler.theta = euler_out[1]
         self.orien_atual_euler.psi = euler_out[2]       

@@ -31,9 +31,10 @@ class Attitude_Control(Controller):
     Salidas:
         - COLOCAR AQUI AS SAÍDAS
     """    
-    def __init__(self):
+    def __init__(self, freq):
         super().__init__()
         # parâmeters
+        self.freq = freq # frequência de atualização do controlador
         self.orientation_atual = Quaternion1()
         self.orientation_atual_euler = Euler()
         self.pos_control_output = PositionControllerOutputStamped()
@@ -106,31 +107,31 @@ class Attitude_Control(Controller):
     def control(self):
         # chama o controle de attitude 
         # publica os três torques
-        """
+        '''
         Controle de atitude em quaternions:
         att_control_quat(
                          quaternion_atual,
                          quaternion_desejado,
                          velocidade_angular_atual) -> (tau, error)
-        """
-
-        tau, error = self.att_control_quat(
-            self.quat_to_np_array(self.orientation_atual),
-            self.quat_to_np_array(self.attitude_error_quat),
-            self.point_to_np_array(self.vel_angular_atual))
+        '''
+        #tau, error = self.att_control_quat(
+        #    self.quat_to_np_array(self.orientation_atual),
+        #    self.quat_to_np_array(self.attitude_error_quat),
+        #    self.point_to_np_array(self.vel_angular_atual))
         
-        """
+        '''
         Controle de atitude PD baseado em ângulos de Euler:
         att_control_PD(
                        ângulos_de Euler_atual, 
                        velocidade_angular_atual, 
                        ângulos_de_Euler_desejados) -> (tau, error)
-        
+        '''
         tau, error = self.att_control_PD(
                 self.euler_to_np_array(self.orientation_atual_euler),
                 self.point_to_np_array(self.vel_angular_atual),
-                self.euler_to_np_array(self.attitude_error_euler))
-        """
+                self.euler_to_np_array(self.attitude_error_euler),
+                self.freq)
+        
         self.att_control_output.torques.x = tau[0]
         self.att_control_output.torques.y = tau[1]
         self.att_control_output.torques.z = tau[2]
@@ -152,8 +153,9 @@ if __name__ == '__main__':
     try:
         node_name = 'attitude_controller_2'
         rospy.init_node(node_name)
-        Attitude_Control()        
-        rate = rospy.Rate(50) # 50hz
+        freq = 100              # update frequency
+        rate = rospy.Rate(freq) # 100Hz
+        Attitude_Control(freq)        
         rate.sleep()
         rospy.spin()
     except rospy.ROSInterruptException:

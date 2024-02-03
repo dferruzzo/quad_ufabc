@@ -92,7 +92,7 @@ class Controller:
         
     ############################### PID CONTROL APPROACH USING EULER ANGLES PARAMETRIZATION #########################
 
-    def att_control_PD(self, ang_atual, ang_vel_atual, ang_des):
+    def att_control_PD(self, ang_atual, ang_vel_atual, ang_des, freq):
         
         phi = float(ang_atual[0])
         theta = float(ang_atual[1])
@@ -129,8 +129,9 @@ class Controller:
         #                [0, 0, 35]])*1.3
         
         angle_error = ang_des - ang_atual
-
-        ang_vel_des = (ang_des - self.ang_ant_des)/0.01
+        #ang_vel_des = (ang_des - self.ang_ant_des)/0.01
+        # TODO Implementar filtro PB para essa derivada.
+        ang_vel_des = (ang_des - self.ang_ant_des)*freq
 
         ang_vel_error = ang_vel_des - ang_vel_atual
 
