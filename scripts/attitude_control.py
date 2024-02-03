@@ -31,8 +31,10 @@ class Attitude_Control(Controller):
     Salidas:
         - COLOCAR AQUI AS SAÍDAS
     """    
-    def __init__(self, freq):
+    def __init__(self, freq, controller='Quat'):
         super().__init__()
+        # Inicialização
+        self.controller = controller    # tipo de controlador
         # parâmeters
         self.freq = freq # frequência de atualização do controlador
         self.orientation_atual = Quaternion1()
@@ -107,26 +109,20 @@ class Attitude_Control(Controller):
     def control(self):
         # chama o controle de attitude 
         # publica os três torques
-        '''
-        Controle de atitude em quaternions:
-        att_control_quat(
-                         quaternion_atual,
-                         quaternion_desejado,
-                         velocidade_angular_atual) -> (tau, error)
-        '''
-        #tau, error = self.att_control_quat(
-        #    self.quat_to_np_array(self.orientation_atual),
-        #    self.quat_to_np_array(self.attitude_error_quat),
-        #    self.point_to_np_array(self.vel_angular_atual))
-        
-        '''
-        Controle de atitude PD baseado em ângulos de Euler:
-        att_control_PD(
-                       ângulos_de Euler_atual, 
-                       velocidade_angular_atual, 
-                       ângulos_de_Euler_desejados) -> (tau, error)
-        '''
-        tau, error = self.att_control_PD(
+
+        if self.controller == 'Quat':
+            tau, error = self.att_control_Quat(
+                self.quat_to_np_array(self.orientation_atual),
+                self.quat_to_np_array(self.attitude_error_quat),
+                self.point_to_np_array(self.vel_angular_atual))
+        elif self.controller == 'PD':
+            tau, error = self.att_control_PD(
+                self.euler_to_np_array(self.orientation_atual_euler),
+                self.point_to_np_array(self.vel_angular_atual),
+                self.euler_to_np_array(self.attitude_error_euler),
+                self.freq)
+        else:
+            tau, error = self.att_control_PD(
                 self.euler_to_np_array(self.orientation_atual_euler),
                 self.point_to_np_array(self.vel_angular_atual),
                 self.euler_to_np_array(self.attitude_error_euler),
@@ -155,7 +151,7 @@ if __name__ == '__main__':
         rospy.init_node(node_name)
         freq = 100              # update frequency
         rate = rospy.Rate(freq) # 100Hz
-        Attitude_Control(freq)        
+        Attitude_Control(freq, controller='Quat')        
         rate.sleep()
         rospy.spin()
     except rospy.ROSInterruptException:

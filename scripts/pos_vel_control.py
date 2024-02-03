@@ -42,9 +42,11 @@ class Pos_Vel_Control(Controller):
         - erro de atitude em ângulos de Euler.
     """    
     
-    def __init__(self) -> None:
+    def __init__(self, controller) -> None:
         
         # Parâmetros
+        self.controller = controller        # tipo de controlador
+        # Inicialização
         self.pos_atual = Vector3()              # posição atual
         self.vel_atual = Vector3()              # velocidade atual
         self.orientation_atual = Quaternion()   # orientação atual
@@ -108,49 +110,33 @@ class Pos_Vel_Control(Controller):
     
     def control(self):
         # Saída:  
-        # T é o empuxo total
-        # q_pdes é o quaternio de atitude desejado correspondente
+        # T é o empuxo total.
+        # q_pdes é o quaternio de atitude desejado correspondente aos ângulos de Euler desejados.
+        # euler_out é a atitude desejada em ângulos de Euler.
         #    
-        '''
-        Controle de posição e velocidade baseado em quaternions
-        pos_control_quat(
-                        posição_atual,
-                        posição_desejada,
-                        velocidade_atual,
-                        velocidade_desejada) -> (Empuxo total, atitude_desejado_quat)
-        '''
-        T, q_erro = self.pos_control_quat(
-            self.point_to_np_array(self.pos_atual),
-            self.point_to_np_array(self.pos_des),
-            self.point_to_np_array(self.vel_atual),
-            self.point_to_np_array(self.vel_des),
-            self.quat_to_np_array(self.orientation_des))
-        euler_out = Quat2Euler(q_erro)
-
-        '''
-        Controle de posição e velocidade  PD
-        pos_control_PD(
-                       posição_atual,
-                       posição desejada,
-                       velocidade_atual,
-                       velocidade_desejada,
-                       aceleração_desejada,
-                       psi) -> (Empuxo_total, phi_desejado, theta_desejado)
-        '''
-        
-        #T, phi_des, theta_des = self.pos_control_PD(
-        #        self.point_to_np_array(self.pos_atual),
-        #        self.point_to_np_array(self.pos_des),
-        #        self.point_to_np_array(self.vel_atual),
-        #        self.point_to_np_array(self.vel_des),
-        #        self.point_to_np_array(self.acel_des),
-        #        np.double(self.euler_orientation_des.psi))
-        #euler_out = np.array([
-        #    phi_des[0],
-        #    theta_des[0], 
-        #    np.double(self.euler_orientation_des.psi)])  
-        #q_erro = Euler2Quat(euler_out)
-        
+        if self.controller == "Quat":
+            T, q_erro, euler_out = self.pos_control_Quat(
+                self.point_to_np_array(self.pos_atual),
+                self.point_to_np_array(self.pos_des),
+                self.point_to_np_array(self.vel_atual),
+                self.point_to_np_array(self.vel_des),
+                self.quat_to_np_array(self.orientation_des))
+        elif self.controller == "PD":
+            T, q_erro, euler_out = self.pos_control_PD(
+                self.point_to_np_array(self.pos_atual),
+                self.point_to_np_array(self.pos_des),
+                self.point_to_np_array(self.vel_atual),
+                self.point_to_np_array(self.vel_des),
+                self.point_to_np_array(self.acel_des),
+                np.double(self.euler_orientation_des.psi)) 
+        else:
+            T, q_erro, euler_out = self.pos_control_Quat(
+                self.point_to_np_array(self.pos_atual),
+                self.point_to_np_array(self.pos_des),
+                self.point_to_np_array(self.vel_atual),
+                self.point_to_np_array(self.vel_des),
+                self.quat_to_np_array(self.orientation_des))
+                
         self.orien_atual_euler.phi = euler_out[0]
         self.orien_atual_euler.theta = euler_out[1]
         self.orien_atual_euler.psi = euler_out[2]       
@@ -170,7 +156,7 @@ if __name__ == '__main__':
     try:
         node_name = 'pos_vel_controller_2'
         rospy.init_node(node_name)
-        Pos_Vel_Control()        
+        Pos_Vel_Control(controller="Quat")        
         rate = rospy.Rate(50) # 50hz
         rate.sleep()
         rospy.spin()

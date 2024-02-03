@@ -1,5 +1,5 @@
 import numpy as np
-from quat_utils import QuatProd, Quat2Euler
+from quat_utils import QuatProd, Quat2Euler, Euler2Quat
 #from numpy.core.numeric import NaN
 #from quat_utils import DerivQuat
 #from scipy.linalg import solve_continuous_are as solve_lqr
@@ -203,7 +203,13 @@ class Controller:
         phi_des = (rddot_c[0]*np.sin(psi) - rddot_c[1]*np.cos(psi))/self.G
         theta_des = (rddot_c[0]*np.cos(psi) + rddot_c[1]*np.sin(psi))/self.G
 
-        return T, phi_des, theta_des
+        euler_out = np.array([
+            phi_des[0],
+            theta_des[0], 
+            psi])  
+        q_erro = Euler2Quat(euler_out)
+        
+        return T, q_erro, euler_out
 
 
     ####################### PID CONTROL APPROACH USING QUATERNION PARAMETRIZATION ###############################################
@@ -229,7 +235,7 @@ class Controller:
         
         return ln_q
 
-    def att_control_quat(self, q_atual, q_des, ang_vel_atual):
+    def att_control_Quat(self, q_atual, q_des, ang_vel_atual):
         
         """
         Computes the desired torques for quadrotor based on
@@ -284,7 +290,7 @@ class Controller:
 
         return tau, error    
 
-    def pos_control_quat(self, pos_atual, pos_des, vel_atual, vel_des, q_des):
+    def pos_control_Quat(self, pos_atual, pos_des, vel_atual, vel_des, q_des):
         
         """
         Function that computes the desired thrust and quaternion for quadrotor
@@ -313,8 +319,8 @@ class Controller:
         q_norm = np.linalg.norm(q)
         q_p = q/q_norm
         q_erro = QuatProd(q_p, q_des)        
-        
-        return Fu_norm, q_erro
+        euler_out = Quat2Euler(q_erro)
+        return Fu_norm, q_erro, euler_out
 
     #################################### TRAJECTORY PLANNER FUNCTIONS ######################################################
     
