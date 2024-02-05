@@ -89,9 +89,7 @@ class Controller:
         F_new = 0
         M_new = 0
         return W, F_new, M_new
-        
-    ############################### PID CONTROL APPROACH USING EULER ANGLES PARAMETRIZATION #########################
-
+    
     def pos_control_PD(self, pos_atual, pos_des, vel_atual, vel_des, accel_des, psi):
 
         #PD gains Real States
@@ -179,8 +177,6 @@ class Controller:
         q_erro = QuatProd(q_p, q_des)        
         euler_out = Quat2Euler(q_erro)
         return Fu_norm, q_erro, euler_out
-
-    ####################### PID CONTROL APPROACH USING QUATERNION PARAMETRIZATION ###############################################
     
     def att_control_PD(self, ang_atual, ang_vel_atual, ang_des, freq):
         
@@ -196,28 +192,6 @@ class Controller:
                        [0, 8, 0],
                        [0, 0, 1]])*0.8
 
-        #PD gains Estimated States
-        # Kp = np.array([[200, 0 ,0],
-        #                [0, 200, 0],
-        #                [0, 0, 120]])*1.5
-        # Kd = np.array([[50, 0, 0],
-        #                [0, 50, 0],
-        #                [0, 0, 45]])*1
-
-        # Kp = np.array([[20, 0 ,0],
-        #                [0, 20, 0],
-        #                [0, 0, 5]])*0.6
-        # Kd = np.array([[12, 0, 0],
-        #                [0, 12, 0],
-        #                [0, 0, 1]])*1
-
-        # Kp = np.array([[250, 0 ,0],
-        #                [0, 250, 0],
-        #                [0, 0, 10]])*5.4
-        # Kd = np.array([[40, 0, 0],
-        #                [0, 40, 0],
-        #                [0, 0, 35]])*1.3
-        
         angle_error = ang_des - ang_atual
         #ang_vel_des = (ang_des - self.ang_ant_des)/0.01
         #
@@ -315,6 +289,7 @@ class Controller:
                        ang_vel_atual[1],
                        ang_vel_atual[2]]]).T
 
+        # TODO Implementar filtro PB para essa derivada.
         vel_ang_desejada = (euler_desejado - self.ang_ant_des)*freq
         
         x_des = np.array([[euler_desejado[0],
@@ -325,6 +300,7 @@ class Controller:
                            vel_ang_desejada[2]]]).T
         error = np.array([x- x_des]).reshape((6,1))
         # 
+        # TODO Implementar perturbação Ir*Omega_r
         A = np.zeros((6,6))
         A[0,3] = 1
         A[1,4] = 1

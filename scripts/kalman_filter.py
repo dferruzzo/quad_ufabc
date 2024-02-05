@@ -10,11 +10,9 @@ from quat_utils import Quat2Rot, QuatProd, SkewMat, DerivQuat, Conj
 #Set main directory
 mydir = os.path.abspath(sys.path[0])
 
-
 class KF():
 
     def __init__(self):
-
 
         # #Initial covariance matrix for MEKF
         # self.P_K = np.eye(6)*1000
@@ -61,8 +59,8 @@ class KF():
         #Initial error state vector for ErEKF
         self.ex_k = np.zeros((12,1))
 
-
     #Multiplicative Extended Kalman Filter
+    
     def MEKF(self, accel, gyro, cam_vec):
         
         self.dt = 0.01
@@ -211,9 +209,6 @@ class KF():
 
         return q_K, b_K, P_K
 
-
-
-
     #Error State Extended Kalman Filter
 
     def ErEKF(self, accel_raw, ang_vel, cam_att, cam_pos, cam2_att, cam2_pos, dt):
@@ -222,17 +217,21 @@ class KF():
         self.dt = dt
 
         #Predict position and quaternion using IMU measurements
-        self.pos_k, self.v_k, self.q_k, self.b_k, self.P_k = self.Predict_ErEKF(self.q_K, self.pos_K, self.v_K, self.b_K,self.P_K, accel_raw, ang_vel)
+        self.pos_k, self.v_k, self.q_k, self.b_k, self.P_k = \
+        self.Predict_ErEKF(self.q_K, self.pos_K, self.v_K, self.b_K,self.P_K, accel_raw, ang_vel)
 
         if cam_att is not None or cam2_att is not None:
 
             #Update position and quaternion using accelerometer and camera measurements
-            self.pos_K, self.v_K, self.q_K, self.b_K, self.P_K = self.Update_ErEKF_Total(self.ex_k, self.pos_k, self.v_k, self.q_k, self.b_k, self.P_k, accel_raw, cam_att, cam_pos, cam2_att, cam2_pos)
+            self.pos_K, self.v_K, self.q_K, self.b_K, self.P_K = \
+                self.Update_ErEKF_Total(self.ex_k, self.pos_k, self.v_k,\
+                    self.q_k, self.b_k, self.P_k, accel_raw, cam_att, cam_pos, cam2_att, cam2_pos)
         
         else:
             
             #Update position and quaternion using accelerometer and camera measurements
-            self.pos_K, self.v_K, self.q_K, self.b_K, self.P_K = self.Update_ErEKF_IMU(self.ex_k, self.pos_k, self.v_k, self.q_k, self.b_k, self.P_k, accel_raw)
+            self.pos_K, self.v_K, self.q_K, self.b_K, self.P_K = \
+                self.Update_ErEKF_IMU(self.ex_k, self.pos_k, self.v_k, self.q_k, self.b_k, self.P_k, accel_raw)
 
 
         #Reset
@@ -240,8 +239,6 @@ class KF():
 
         #Trace
         self.trace = np.trace(self.P_K)
-
-
 
     def Predict_ErEKF(self, q_K, p_K, v_K, b_K, P_K, accel_raw, gyro):
         
