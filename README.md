@@ -21,7 +21,7 @@ docker run \
 -p 8888:8888 \
 dferruzzo/ros-noetic-gazebo-gzweb:v1.02 /bin/bash -c '/home/catkin_ws/src/quad_ufabc/startup.sh && /bin/bash'
 ```
-No Windows, para ter acesso ao display server e utilizar Gazebo com `roslaunch quad_ufabc quad.launch`, o seguinte script foi testado com sucesso
+No Windows, rodando Ubuntu no WSL2, para ter acesso ao display server e utilizar Gazebo com `roslaunch quad_ufabc quad.launch`, o seguinte script foi testado com sucesso
 ```
 docker run \
 --rm \
