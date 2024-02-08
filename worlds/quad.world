@@ -8,7 +8,7 @@
 			<real_time_factor>1.0</real_time_factor>
 			<!-- 
 				setar o real_time_update_rate a 250 para computador com 4 cores.
-				setar o real_time_update_rate a 590 para computador com mais cores.
+				setar o real_time_update_rate a 500 para computador com mais cores.
 			-->
 			<real_time_update_rate>500</real_time_update_rate>
 			<ode>
