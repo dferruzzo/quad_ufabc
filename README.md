@@ -17,7 +17,8 @@ docker run \
 --name [name-of-your-container] \
 -v [path-to-quad-ufabc]:/home/catkin_ws/src/quad-ufabc \
 -v [path-to-quad-ufabc]:/root/gzweb/http/client/assets/quad-ufabc \
---network host \
+-p 8080:8080 \
+-p 8888:8888 \
 dferruzzo/ros-noetic-gazebo-gzweb:v1.02 /bin/bash -c '/home/catkin_ws/src/quad_ufabc/startup.sh && /bin/bash'
 ```
 
