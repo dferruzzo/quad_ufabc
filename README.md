@@ -21,7 +21,24 @@ docker run \
 -p 8888:8888 \
 dferruzzo/ros-noetic-gazebo-gzweb:v1.02 /bin/bash -c '/home/catkin_ws/src/quad_ufabc/startup.sh && /bin/bash'
 ```
+No Windows, para ter acesso ao Xserver e utilizar Gazebo com `roslaunch quad-ufabc quad.launch`, o seguinte script foi testado com sucesso
+```
+docker run \
+--rm \
+-it \
+--name diego-quad \
+-v /home/[your_user_name]/quad_ufabc/:/home/catkin_ws/src/quad-ufabc \
+-v /home/[your_user_name]/quad_ufabc/:/root/gzweb/http/client/assets/quad-ufabc \
+--env="DISPLAY=$DISPLAY" \
+--env="QT_X11_NO_MITSHM=1" \
+--volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
+--env="XAUTHORITY=$XAUTH" \
+--volume="$XAUTH:$XAUTH" \
+-p 8080:8080 \
+-p 8888:8888 \
+dferruzzo/ros-noetic-gazebo-gzweb:v1.02 /bin/bash -c '/home/catkin_ws/src/quad-ufabc/startup.sh && /bin/bash'
 
+```
 O script `/home/catkin_ws/quad_ufabc/startup.sh` inicia o workspace e executa `catkin_make`.
 
 ## Integração com VScode
