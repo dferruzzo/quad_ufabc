@@ -74,4 +74,4 @@ Em qulquer caso, seja no navegador ou na tela, num outro terminal rodar `rosrun 
 
 ## Visualizar os topicos
 
-Pode rodar, utilizar e modificar o script `figures.py` para gerar as figuras da maioria dos tópicos relevante. O script utiliza `mpld3` para gerar o server html na porta 8888, `http://localhost:8888`.
+Rodando no Ubuntu pode rodar, utilizar e modificar o script `figures.py` para gerar as figuras da maioria dos tópicos relevante. O script utiliza `mpld3` para gerar o server html na porta 8888, `http://localhost:8888`. No Windows-WSL2-Ubuntu o script não roda corretamente.
