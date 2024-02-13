@@ -2,6 +2,9 @@
     "name": "My Dev Container",
     "workspaceMount": "source=${localWorkspaceFolder},target=/home/catkin_ws/src/quad_ufabc,type=bind",
     "workspaceFolder": "/home/catkin_ws/src/quad_ufabc",
+    "runArgs": [
+        "--rm"
+    ],
     "customizations": {
         "vscode": {
             "extensions": [
