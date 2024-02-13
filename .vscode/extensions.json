@@ -1,7 +1,3 @@
 {
-    "recommendations": [
-        "github.copilot-chat",
-        "gruntfuggly.todo-tree",
-        "ms-toolsai.datawrangler"
-    ]
+    "recommendations": []
 }
