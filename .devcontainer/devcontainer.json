@@ -3,8 +3,14 @@
     "workspaceMount": "source=${localWorkspaceFolder},target=/home/catkin_ws/src/quad_ufabc,type=bind",
     "workspaceFolder": "/home/catkin_ws/src/quad_ufabc",
     "runArgs": [
-        "--rm"
+        "--rm",
+        "--privileged"
     ],
+    "containerEnv": {
+        "DISPLAY":  "unix:0",
+        "QT_X11_NO_MITSHM": "1",
+        "XAUTHORITY": "$XAUTH"
+        },
     "customizations": {
         "vscode": {
             "extensions": [
