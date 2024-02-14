@@ -1,77 +1,63 @@
-# quad_ufabc
+# Quad UFABC
 
-Quadrirrotor em ROS Noetic Gazebo gzweb.
+## Descrição
 
-## Clonar o repo
+Quad UFABC é um projeto que implementa um quadrirrotor em ROS Noetic Gazebo. A simulação conta com sensores IMU (acelerômetros e giroscópios). É possível implementar diferentes tipos de controladores para a dinâmica translacional e para a rotacional. No momento tem sido implementado os seguintes controladores:
 
-`git clone https://github.com/dferruzzo/quad_ufabc.git`
+* Para a dinâmica Translacional:
+  * Controlador PD em ângulos de Euler,
+  * Controlador PD em quatérnios.   
+* Para a dinâmica Rotacional:
+  * Controlador PD em quatérnios,
+  * Controlador LQR em ângulos de Euler.
 
-## ROS Noetic + Gazebo + gzweb
+## Requerimentos
 
-[https://hub.docker.com/r/dferruzzo/ros-noetic-gazebo-gzweb](https://hub.docker.com/r/dferruzzo/ros-noetic-gazebo-gzweb)
+* [Visual Studio Code](https://code.visualstudio.com/) com extensão: [Microsoft Dev Container](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers),
+* [Docker](https://www.docker.com/),
+* No Windows precisa `Ubuntu` no [WSL2](https://learn.microsoft.com/pt-br/windows/wsl/install).
 
+## Instalação
+
+Abra um terminal no Linux ou no WSL no Windows e  clone o repositório
+
+```bash
+git clone https://github.com/dferruzzo/quad_ufabc.git
 ```
-docker run \
---rm \
--it \
---name [name-of-your-container] \
--v [path-to-quad-ufabc]:/home/catkin_ws/src/quad-ufabc \
--v [path-to-quad-ufabc]:/root/gzweb/http/client/assets/quad-ufabc \
--p 8080:8080 \
--p 8888:8888 \
-dferruzzo/ros-noetic-gazebo-gzweb:v1.02 /bin/bash -c '/home/catkin_ws/src/quad_ufabc/startup.sh && /bin/bash'
+Abra o Vscode, no Windows precisa se conectar ao WSL antes de continuar.
+Abrir a pasta `quaf_ufabc` no `Vscode`. No menu do canto inferior esquerdo do `Vscode` selecionar a opção `Reabrir no Contêiner`. Isso irá preparar o ambiente de trabalho e ira fazer o download da imagem do `ROS noetic + Gazebo` caso não tenha sido abaixado antes.
+
+## Iniciar o projeto
+
+Num terminal do Vscode rode o comando
+
+```bash
+roslaunch quad_ufabc quad.launch
 ```
-No Windows, rodando Ubuntu no WSL2, para ter acesso ao display server e utilizar Gazebo com `roslaunch quad_ufabc quad.launch`, o seguinte script foi testado com sucesso
-```
-docker run \
---rm \
--it \
---name diego-quad \
--v /home/[your_user_name]/quad_ufabc/:/home/catkin_ws/src/quad-ufabc \
--v /home/[your_user_name]/quad_ufabc/:/root/gzweb/http/client/assets/quad-ufabc \
---env="DISPLAY=$DISPLAY" \
---env="QT_X11_NO_MITSHM=1" \
---volume="/tmp/.X11-unix:/tmp/.X11-unix:rw" \
---env="XAUTHORITY=$XAUTH" \
---volume="$XAUTH:$XAUTH" \
--p 8080:8080 \
--p 8888:8888 \
-dferruzzo/ros-noetic-gazebo-gzweb:v1.02 /bin/bash -c '/home/catkin_ws/src/quad-ufabc/startup.sh && /bin/bash'
-
-```
-O script `/home/catkin_ws/quad_ufabc/startup.sh` inicia o workspace e executa `catkin_make`.
-
-## Integração com VScode
-
-Abra o Vscode no seu computador e utilize a extensão Docker para abrir o container com VScode. Caso não utilize Vscode pode utilizar `screen` para abrir vários terminais.
-
-## Iniciar o projeto com gzweb
-
-Para utlizar o navegador utilizar o gzweb. Abra um terminal no novo container. 
-
-```
+que inicia a simulação em ROS Noetic Gazebo, ou
+```bash
 roslaunch quad_ufabc quad.launch gui:=false
 ```
+Para iniciar a simulação sem GUI e num outro terminal rode
 
-num outro terminal
-
-```
+```bash
 cd ~/gzweb/
 npm start
 ```
-
-O gzweb está disponível no `http://localhost:8080`
-
-## Iniciar o Projeto com Gazebo
-
-Precisa criar o container com permissões para acessar a tela.
-
-`roslaunch quad_ufabc quad.launch`
+para abrir o Gazebo no browser `http://localhost:8080`.
 
 ## Iniciar a simulação
 
-Em qulquer caso, seja no navegador ou na tela, num outro terminal rodar `rosrun quad_ufabc main.py` para iniciar a simulação. Utilize `Ctrl+c` para finalizar o script `main.py`.
+Em qualquer caso, seja no navegador ou na tela, num outro terminal rode
+```bash
+rosrun quad_ufabc main.py
+```
+para iniciar a simulação. Utilize `Ctrl+c` para finalizar o script `main.py`.
 
-## Visualizar os topicos
+## Visualizar os tópicos
 
-Rodando no Ubuntu pode rodar, utilizar e modificar o script `figures.py` para gerar as figuras da maioria dos tópicos relevante. O script utiliza `mpld3` para gerar o server html na porta 8888, `http://localhost:8888`. No Windows-WSL2-Ubuntu o script não roda corretamente.
+Utilizar o script `script/figures.py` 
+```bash
+./figures.py
+```
+para gerar as figuras da maioria dos tópicos relevante. O script utiliza `mpld3` para gerar o server html na porta 8888, `http://localhost:8888`.
