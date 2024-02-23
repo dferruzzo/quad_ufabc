@@ -1,5 +1,4 @@
 FROM osrf/ros:noetic-desktop-full
-# FROM dferruzzo/ros-noetic-gazebo-gzweb:v1.02
 
 LABEL maintainer='diego.ferruzzo'
 LABEL version='1.03'
