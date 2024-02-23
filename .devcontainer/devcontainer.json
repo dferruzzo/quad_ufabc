@@ -6,13 +6,11 @@
         "--rm",
         "--privileged"
     ],
-    /*
     "containerEnv": {
         "DISPLAY":  "unix:0",
         "QT_X11_NO_MITSHM": "1",
         "XAUTHORITY": "$XAUTH"
         },
-    */
     "customizations": {
         "vscode": {
             "extensions": [
