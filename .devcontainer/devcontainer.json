@@ -1,32 +1,7 @@
 {
-    "name": "My Dev Container",
-    "workspaceMount": "source=${localWorkspaceFolder},target=/home/catkin_ws/src/quad_ufabc,type=bind",
-    "workspaceFolder": "/home/catkin_ws/src/quad_ufabc",
-    "runArgs": [
-        "--rm",
-        "--privileged"
-    ],
-    "containerEnv": {
-        "DISPLAY":  "unix:0",
-        "QT_X11_NO_MITSHM": "1",
-        "XAUTHORITY": "$XAUTH"
-        },
-    "customizations": {
-        "vscode": {
-            "extensions": [
-                "ms-python.python",
-                "ms-vscode.cpptools",
-                "github.copilot-chat",
-                "gruntfuggly.todo-tree"
-            ]
-        }
-    },
-    "build": {
-        "dockerfile": "Dockerfile"
-    },
-    "postStartCommand": "/home/catkin_ws/src/quad_ufabc/startup.sh",
-    "forwardPorts": [
-        8080,
-        8888
-    ]
+    "name": "ROS Noetic and Gzweb",
+    "dockerFile": "Dockerfile",
+    "forwardPorts": [11311, 8080],
+    "postCreateCommand": "echo 'source /opt/ros/noetic/setup.bash' >> ~/.bashrc",
+    "extensions": ["ms-iot.vscode-ros"]
 }
