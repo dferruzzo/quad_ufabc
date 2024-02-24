@@ -27,6 +27,7 @@
     "postStartCommand": "/home/catkin_ws/src/quad_ufabc/startup.sh",
     "forwardPorts": [
         8080,
-        8888
+        8888,
+        11311
     ]
 }
