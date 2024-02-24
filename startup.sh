@@ -8,5 +8,5 @@ catkin_make
 echo "source /home/catkin_ws/devel/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 cd ~/gzweb/http/client/assets/
-ln -s /home/catkin_ws/src/quad_ufabc/ quad_ufabc
+#ln -s /home/catkin_ws/src/quad_ufabc/ quad_ufabc
 roscd quad_ufabc
