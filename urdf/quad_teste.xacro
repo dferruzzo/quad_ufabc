@@ -605,17 +605,23 @@
 		  </linear_acceleration>
 		</imu>
 	    
-	      <always_on>true</always_on>
-	      <update_rate>100</update_rate>
-	      <visualize>true</visualize>
-	      <topic>__default_topic__</topic>
-	      <plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
+		<!--
+			TODO: Add noise and other parameters to the IMU. 
+		-->
+
+		<always_on>true</always_on>
+		<update_rate>100</update_rate>
+		<visualize>true</visualize>
+		<topic>__default_topic__</topic>
+		<plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
 		<topicName>imu</topicName>
 		<bodyName>IMU</bodyName>
 		<updateRateHZ>100.0</updateRateHZ>
 		<gaussianNoise>0.0</gaussianNoise>
 		<xyzOffset>0 0 0</xyzOffset>
 		<rpyOffset>0 0 0</rpyOffset>
+		<accelDrift>0.00 0.00 0.00</accelDrift>
+		<rateDrift>0.00 0.00 0.00</rateDrift>
 		<frameName>IMU</frameName>
 		<initialOrientationAsReference>false</initialOrientationAsReference>
 	      </plugin>

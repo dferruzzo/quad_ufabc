@@ -9,7 +9,7 @@ from quat_utils import Quat2Euler
 from quad_ufabc.msg import Euler
 
 class EKF:
-    # TODO: Implementar o filtro de Kalman
+    # TODO: Implementar o filtro de Kalman de atitude e velocidade angular para o controlador de attitude
     def __init__(self):
         pub_att_name = '/quad/kf/attitude'
         pub_eul_name = '/quad/kf/euler'

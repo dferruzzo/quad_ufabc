@@ -7,17 +7,19 @@
         "--privileged"
     ],
     "containerEnv": {
-        "DISPLAY":  "unix:0",
+        "DISPLAY": "unix:0",
         "QT_X11_NO_MITSHM": "1",
         "XAUTHORITY": "$XAUTH"
-        },
+    },
     "customizations": {
         "vscode": {
             "extensions": [
                 "ms-python.python",
                 "ms-vscode.cpptools",
                 "github.copilot-chat",
-                "gruntfuggly.todo-tree"
+                "gruntfuggly.todo-tree",
+                "GitHub.copilot",
+                "Gruntfuggly.todo-tree"
             ]
         }
     },
