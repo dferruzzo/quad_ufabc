@@ -113,8 +113,8 @@ def main():
     #start_recorder_node()       
     start_quadrotor()
     start_estimator()   
-    #start_pos_vel_control()     
-    #start_attitude_control()    
+    start_pos_vel_control()     
+    start_attitude_control()    
     start_desired_traj()        
     rospy.spin()
 

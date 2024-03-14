@@ -549,7 +549,7 @@
 	<gazebo reference="IMU">
 	    <gravity>true</gravity>
 	    <sensor name="imu_sensor" type="imu">
-	    
+	<!--  
 	    <imu>
 		  <angular_velocity>
 		    <x>
@@ -604,9 +604,12 @@
 		    </z>
 		  </linear_acceleration>
 		</imu>
-	    
+			-->    
 		<!--
 			TODO: Add noise and other parameters to the IMU. 
+			        self.b_gx = np.random.normal(0.2, 1e-4)
+			        self.b_gy = np.random.normal(0.4, 1e-4)
+        			self.b_gz = np.random.normal(-0.3, 1e-4)
 		-->
 
 		<always_on>true</always_on>
@@ -616,10 +619,11 @@
 		<plugin filename="libgazebo_ros_imu_sensor.so" name="imu_plugin">
 		<topicName>imu</topicName>
 		<bodyName>IMU</bodyName>
-		<updateRateHZ>100.0</updateRateHZ>
-		<gaussianNoise>0.0</gaussianNoise>
+		<updateRateHZ>10.0</updateRateHZ>
+		<gaussianNoise>0.3 3.5e-2</gaussianNoise>
 		<xyzOffset>0 0 0</xyzOffset>
 		<rpyOffset>0 0 0</rpyOffset>
+	    <gyroscopeTurnOnBiasSigma>0 0 0</gyroscopeTurnOnBiasSigma> <!-- Gyroscope turn on bias standard deviation [rad/s] -->
 		<accelDrift>0.00 0.00 0.00</accelDrift>
 		<rateDrift>0.00 0.00 0.00</rateDrift>
 		<frameName>IMU</frameName>

@@ -27,7 +27,7 @@ class waypoint:
 controller = Controller()
 
 save_to_file:bool = True
-file_name:str = 'trajectory_3.p'
+file_name:str = 'trajectory_6.p'
 
 # Define the trajectory points and the desired yaw angle
 # waypoint(x, y, z, psi, tempo)

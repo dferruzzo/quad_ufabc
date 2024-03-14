@@ -55,7 +55,9 @@ class KF():
         #Initial gyroscope bias
         self.b_K = np.array([[0, 0, 0]]).T
         #Initial covariance matrix for ErEKF
-        self.P_K = np.diag([1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-6, 1e-6, 1e-6, 1e-3, 1e-3, 1e-3])
+        #self.P_K = np.diag([1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-6, 1e-6, 1e-6, 1e-3, 1e-3, 1e-3])
+        self.P_K = np.diag([1e-3, 1e-3, 1e-3, 1e-3, 1e-3, 1e-3])
+        
         #Initial error state vector for ErEKF
         self.ex_k = np.zeros((12,1))
 

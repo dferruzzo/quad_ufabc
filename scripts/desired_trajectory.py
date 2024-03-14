@@ -28,7 +28,8 @@ def trajectory() -> None:
        
     # Import the desired trajectory computed by 'trajectory_generator.py' executable.        
     mydir = os.path.abspath(sys.path[0]) #Set main directory
-    infile = open(mydir + '/'+'data/trajectory_3.p', 'rb')    
+    infile = open(mydir + '/'+'data/trajectory_6.p', 'rb')    
+    #infile = open(mydir + '/'+'data/trajectory_3.p', 'rb')    
     #infile = open(mydir + '/'+'data/trajectory_2.p', 'rb')
     traj = pickle.load(infile)
     infile.close()        

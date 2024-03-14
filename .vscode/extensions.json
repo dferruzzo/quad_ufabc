@@ -1,3 +1,6 @@
 {
-    "recommendations": []
+    "recommendations": [
+        "github.copilot",
+        "gruntfuggly.todo-tree"
+    ]
 }

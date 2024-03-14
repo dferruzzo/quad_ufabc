@@ -15,7 +15,7 @@ from geometry_msgs.msg import Quaternion, PoseStamped, Vector3Stamped, Pose, Vec
 
 from quat_utils import Quat2Rot
 
-class EKF_node(KF):
+class MEKF_node(KF):
     def __init__(self):
         super().__init__()
         self.b_gx = np.random.normal(0.2, 1e-4)
@@ -47,16 +47,16 @@ class EKF_node(KF):
             data.linear_acceleration.y,
             data.linear_acceleration.z]]).T
         self.ang_vel = np.array([[
-            data.angular_velocity.x + self.b_gx,
-            data.angular_velocity.y + self.b_gy,
-            data.angular_velocity.z + self.b_gz]]).T
+            data.angular_velocity.x,
+            data.angular_velocity.y,
+            data.angular_velocity.z]]).T
         
         t = rospy.Time.now().to_nsec()
         dt = round((t - self.t_ant)*1e-9, 3)
         self.t_ant = t
         if dt > 0.02:dt = 0.01
         
-        self.ErEKF(self.ang_vel, self.accel_raw, None, None, None, None, dt)
+        self.MEKF(self.accel_raw, self.ang_vel, None)
         
         # Publishing
         # ------------------------------------------------------
@@ -66,18 +66,12 @@ class EKF_node(KF):
         self.ang_est.y = self.q_K[2,0]
         self.ang_est.z = self.q_K[3,0]
         self.ang_est.w = self.q_K[0,0]
-        self.attitude_pub.publish(self.ang_est)
-        
-        #Store the esimated position in message
-        self.pos_est.x = self.pos_K[0,0]
-        self.pos_est.y = self.pos_K[1,0]
-        self.pos_est.z = self.pos_K[2,0]
-        # Publish estimated position on 'quad/kf/position' topic
-        self.position_pub.publish(self.pos_est)
+        self.attitude_pub.publish(self.ang_est)       
+
 
 if __name__ == '__main__':
     rospy.init_node('estimation_node_2')
-    EKF_node()
+    MEKF_node()
     rate = rospy.Rate(100) # 100hz
     rate.sleep()
     rospy.spin()
