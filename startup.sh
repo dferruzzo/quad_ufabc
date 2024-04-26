@@ -12,5 +12,5 @@ echo "PS1='${debian_chroot:+($debian_chroot)} \[\033[36m\]\u\[\033[37m\]@\[\033[
 
 source ~/.bashrc
 #cd ~/gzweb/http/client/assets/
-#ln -s /home/catkin_ws/src/quad_ufabc/ quad_ufabc
+ln -s /home/catkin_ws/src/quad_ufabc/ ~/gzweb/http/client/assets/quad_ufabc
 roscd quad_ufabc
