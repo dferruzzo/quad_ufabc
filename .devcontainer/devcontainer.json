@@ -4,7 +4,7 @@
 		"../docker-compose.yml"
 	],
 	"service": "workspace",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/home/catkin_ws/src/quad_ufabc,type=bind",
+  	"workspaceMount": "source=${localWorkspaceFolder},target=/home/catkin_ws/src/quad_ufabc,type=bind",
 	"workspaceFolder": "/home/catkin_ws/src/quad_ufabc",
 	"shutdownAction": "stopCompose",
 	"customizations": {
