@@ -1,5 +1,4 @@
-scripts/data/states.p
-
+.gitignore
 *.pyc
 *.bag
 bags/dados/desired_trajectory.csv
@@ -9,3 +8,4 @@ bags/dados/quad-kf-position.csv
 bags/dados/quad-kf-vel.csv
 scripts/data/states.p
 scripts/data/trajectory_3.p
+scripts/__pycache__/

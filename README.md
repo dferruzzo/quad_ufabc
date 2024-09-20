@@ -14,7 +14,7 @@ Quad UFABC é um projeto que implementa um quadrirrotor em ROS Noetic Gazebo. A 
 ## Requerimentos
 
 * [Visual Studio Code](https://code.visualstudio.com/) com extensão: [Microsoft Dev Container](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers),
-* [Docker](https://www.docker.com/),
+* [Docker](https://www.docker.com/), docker-compose
 * No Windows precisa `Ubuntu` no [WSL2](https://learn.microsoft.com/pt-br/windows/wsl/install).
 
 ## Instalação
@@ -34,25 +34,17 @@ Num terminal do Vscode rode o comando
 ```bash
 roslaunch quad_ufabc quad.launch
 ```
-que inicia a simulação em ROS Noetic Gazebo, ou
-```bash
-roslaunch quad_ufabc quad.launch gui:=false
-```
-Para iniciar a simulação sem GUI e num outro terminal rode
+que inicia a simulação em ROS Noetic Gazebo. 
 
-```bash
-cd ~/gzweb/
-npm start
-```
-para abrir o Gazebo no browser `http://localhost:8080`.
+O Gazebo está disponívek no browser `http://localhost:3000`.
 
 ## Iniciar a simulação
 
-Em qualquer caso, seja no navegador ou na tela, num outro terminal rode
+Para iniciar a simulação, abra um outro terminal e rode o comando:
 ```bash
 rosrun quad_ufabc main.py
 ```
-para iniciar a simulação. Utilize `Ctrl+c` para finalizar o script `main.py`.
+Utilize `Ctrl+c` para finalizar o script `main.py`.
 
 ## Visualizar os tópicos
 

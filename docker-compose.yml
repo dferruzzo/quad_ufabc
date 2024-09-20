@@ -1,0 +1,60 @@
+services:
+  xserver:
+    image: devrt/xserver
+    ipc: host
+    security_opt:
+    - seccomp:unconfined
+    ports:
+    - "3000:80"
+    healthcheck:
+      test: ["CMD-SHELL", "test -e /tmp/.X11-unix/X0"]
+      interval: "1s"
+      retries: 20
+    restart: no
+    container_name: xserver  # Add this line to allow named volume removal
+    #command: /bin/sh -c "trap 'exit 0' SIGTERM; tail -f /dev/null"  # Gracefully handle termination signals 
+  simulator:
+    image: devrt/simulator-empty
+    ipc: host
+    security_opt:
+    - seccomp:unconfined
+    environment:
+    - DISPLAY=:0
+    volumes_from:
+    - xserver
+    depends_on:
+    - xserver
+    container_name: simulator
+    #command: /bin/sh -c "trap 'exit 0' SIGTERM; tail -f /dev/null"
+    # networks:
+    # - ros_network
+  workspace:
+    # env_file:
+    #   - .env
+    image: dferruzzo/ros-noetic-gazebo-gzweb:v1.02
+    ipc: host
+    security_opt:
+    - seccomp:unconfined
+    ports:
+    - "3001:3000"
+    - "3002:8888"
+    volumes:
+    - workspace:/workspace
+    - ./:/home/catkin_ws/src/quad_ufabc  # Mount local folder to /src in the container
+    #command: /bin/sh -c "trap 'exit 0' SIGTERM; tail -f /dev/null"
+    environment:
+    - DISPLAY=:0
+    - ROS_MASTER_URI=http://simulator:11311/
+    volumes_from:
+    - xserver
+    - simulator
+    depends_on:
+    - xserver
+    - simulator
+    restart: no
+    container_name: workspace
+    command: tail -f /dev/null
+    # networks:
+    # - ros_network
+volumes:
+  workspace:

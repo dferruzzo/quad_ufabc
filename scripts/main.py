@@ -110,7 +110,7 @@ def main():
     # 
     rospy.init_node('Main')
     rospy.sleep(1)
-    start_recorder_node()       
+    #start_recorder_node()       
     start_quadrotor()
     start_estimator()   
     start_pos_vel_control()     

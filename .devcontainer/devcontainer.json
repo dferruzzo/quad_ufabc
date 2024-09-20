@@ -1,18 +1,12 @@
 {
     "name": "Quad UFABC",
-    "workspaceMount": "source=${localWorkspaceFolder},target=/home/catkin_ws/src/quad_ufabc,type=bind",
+    "dockerComposeFile": "../docker-compose.yml",  // Use Docker Compose
+    "service": "workspace",  // The primary service for the development container
     "workspaceFolder": "/home/catkin_ws/src/quad_ufabc",
-    "runArgs": [
-        "--rm",
-        "--privileged"
-    ],
-    "containerEnv": {
-        "DISPLAY": "unix:0",
-        "QT_X11_NO_MITSHM": "1",
-        "XAUTHORITY": "$XAUTH"
-    },
+    "runServices": ["xserver", "simulator", "workspace"],  // Ensure that all services are running
+    "shutdownAction": "stopCompose",  // Stop the containers when the dev container shuts down
     "customizations": {
-        "vscode": {
+        "vscode": { 
             "extensions": [
                 "ms-python.python",
                 "ms-vscode.cpptools",
@@ -23,16 +17,16 @@
         }
     },
     "features": {
-    "ghcr.io/devcontainers/features/sshd:1": {
-        "version": "latest"
-    }
+        "ghcr.io/devcontainers/features/sshd:1": {
+            "version": "latest"
+        }
     },
-    "build": {
-        "dockerfile": "Dockerfile"
-    },
-    "postStartCommand": "/home/catkin_ws/src/quad_ufabc/startup.sh",
     "forwardPorts": [
         8080,
         8888
-    ]
+    ],
+    "postStartCommand": "/home/catkin_ws/src/quad_ufabc/startup.sh",
+    "volumes": {
+        "workspace": {}  // Ensure volumes from docker-compose are used
+    }
 }
