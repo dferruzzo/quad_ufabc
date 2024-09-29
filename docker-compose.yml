@@ -1,19 +1,19 @@
 services:
-  code-server:
-    image: codercom/code-server:4.16.1-ubuntu
-    container_name: code-server
-    environment:
-      - DOCKER_USER=$USER
-      - PASSWORD=123456 #Replace this with your login password
-    volumes_from:
-      - workspace
-    volumes:
-      - ./config:/config
-      - $PWD:/home/coder/workspace
-      #- $PWD:/home/catkin_ws/src/quad_ufabc
-    ports:
-      - 8080:8080
-    restart: unless-stopped
+#  code-server:
+#    image: codercom/code-server:4.16.1-ubuntu
+#    container_name: code-server
+#    environment:
+#      - DOCKER_USER=$USER
+#      - PASSWORD=123456 #Replace this with your login password
+#    volumes_from:
+#      - workspace
+#    volumes:
+#      - ./config:/config
+#      - $PWD:/home/coder/workspace
+#      #- $PWD:/home/catkin_ws/src/quad_ufabc
+#    ports:
+#      - 8080:8080
+#    restart: unless-stopped
   xserver:
     image: devrt/xserver
     ipc: host
@@ -72,6 +72,5 @@ services:
     container_name: workspace
     #command: /bin/sh -c "code-server /home/catkin_ws/src/quad_ufabc --bind-addr 0.0.0.0:8080 --auth none"
     command: tail -f /dev/null
-    
 volumes:
   workspace:

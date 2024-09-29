@@ -1,11 +1,7 @@
 .gitignore
 *.pyc
 *.bag
-bags/dados/desired_trajectory.csv
-bags/dados/quad-kf-attitude.csv
-bags/dados/quad-kf-euler.csv
-bags/dados/quad-kf-position.csv
-bags/dados/quad-kf-vel.csv
+bags/dados/*.csv
 scripts/data/states.p
 scripts/data/trajectory_3.p
-scripts/__pycache__/
+scripts/__pycache__/*.pyc
