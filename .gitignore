@@ -4,4 +4,4 @@
 bags/dados/*.csv
 scripts/data/states.p
 scripts/data/trajectory_3.p
-scripts/__pycache__/*.pyc
+scripts/__pycache__/
