@@ -32,13 +32,13 @@ services:
     image: devrt/simulator-empty
     ipc: host
     security_opt:
-    - seccomp:unconfined
+      - seccomp:unconfined
     environment:
-    - DISPLAY=:0
+      - DISPLAY=:0
     volumes_from:
-    - xserver
+      - xserver
     depends_on:
-    - xserver
+      - xserver
     container_name: simulator
     #command: /bin/sh -c "trap 'exit 0' SIGTERM; tail -f /dev/null"
     # networks:

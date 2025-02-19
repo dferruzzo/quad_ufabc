@@ -5,3 +5,8 @@ bags/dados/*.csv
 scripts/data/states.p
 scripts/data/trajectory_3.p
 scripts/__pycache__/
+scripts/__pycache__/quad_control.cpython-38.pyc
+scripts/__pycache__/quad_ros.cpython-38.pyc
+scripts/__pycache__/quat_utils.cpython-38.pyc
+
+
