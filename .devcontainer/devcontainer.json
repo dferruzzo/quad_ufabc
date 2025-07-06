@@ -20,18 +20,13 @@
             ]
         }
     },
-    "features": {
-        "ghcr.io/devcontainers/features/sshd:1": {
-            "version": "latest"
-        }
-    },
     "forwardPorts": [
         8080,
         8888,
         3000
     ],
-    "postStartCommand": "/home/catkin_ws/src/quad_ufabc/startup.sh",
-    "volumes": {
-        "workspace": {} // Ensure volumes from docker-compose are used
-    }
+    "postStartCommand": "/home/catkin_ws/src/quad_ufabc/startup.sh"
+    //"volumes": {
+    //    "workspace": {} // Ensure volumes from docker-compose are used
+    //}
 }
